@@ -10,5 +10,5 @@ They refused.
 
 
 
-# H1 Alea iacta est.
+# Alea iacta est.
 
