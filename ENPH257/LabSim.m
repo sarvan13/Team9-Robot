@@ -8,14 +8,13 @@ L = 0.31;
 Ta = 20;
 s = 5.67 * 10^(-8);
 
-c = 902;
-k = 205;
 p = 2700;
-
-P = 10.6;
-kc = 9.5;
 e = 0.0;
+c = 902;
 
+k = 200;
+P = 10.8;
+kc = 9.8;
 
 UpTime = 60*10;
 DownTime = UpTime;
@@ -74,9 +73,9 @@ while (j < TotalTime)
         powerIn = (P*dt)/(c*p*pi*a^2*dx);
     elseif (j >= 3*UpTime && j < 4*UpTime)
         powerIn = 0;
-    elseif (j >= 4*UpTime && j < 5*UpTime)
+    elseif (j >= 4*UpTime && j < 5*UpTime+30)
         powerIn = (P*dt)/(c*p*pi*a^2*dx);
-    elseif (j >= 5*UpTime && j < 6*UpTime)
+    elseif (j >= 5*UpTime+30 && j < 6*UpTime)
         powerIn = 0;
     elseif (j >= 6*UpTime && j < 7*UpTime)
         powerIn = (P*dt)/(c*p*pi*a^2*dx);
@@ -89,8 +88,8 @@ while (j < TotalTime)
     S3(count) = T(c3);
     S4(count) = T(c4);
     S5(count) = T(c5);
-
     
+        
     %Calculate change in first and last slice
     dT(1) = -k*dt*(T(1)-T(2))/(c*p*(dx)^2) + powerIn - ((2*pi*a*dx+pi*a^2)*kc*( T(abs(1)) - Ta) + (2*pi*a*dx+pi*a^2)*e*s*(( T(abs(1)) + 273)^4 - (Ta + 273)^4))*dt/(c*p*pi*a^2*dx);
     dT(N) = k*dt*(T(N-1)-T(N))/(c*p*(dx)^2) - ((2*pi*a*dx+pi*a^2)*kc*( T(N) - Ta) + (2*pi*a*dx+pi*a^2)*e*s*(( T(N) + 273)^4 - (Ta + 273)^4))*dt/(c*p*pi*a^2*dx);
@@ -121,6 +120,7 @@ end
  j = j - dt;
  
 %Create steady state plot
+
 plot(time,S1, 'b')
 hold on
 plot(time,S2, 'r')
@@ -146,6 +146,5 @@ hold on
 plot(TimeE,SE5, 'k.')
 hold on
 
-title('Horizontal rod (e = 0, P = 10.6, kc = 9.5)')
+title('Horizontal rod (e = 0, P = 10.8, kc = 9.8, k = 200)')
 legend('Sim S1', 'Sim S2', 'Sim S3', 'Sim S4', 'Sim S5', 'Data S1', 'Data S2', 'Data S3', 'Data S4', 'Data S5')
-
