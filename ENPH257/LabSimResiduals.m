@@ -12,9 +12,9 @@ p = 2700;
 e = 0.0;
 c = 902;
 
-k = 200;
-P = 10;
-kc = 10.5;
+k = 195;
+P = 10.0;
+kc = 9.0;
 
 rmin = 10^10;
 
@@ -49,11 +49,9 @@ c3 = round(pos3/dx);
 c4 = round(pos4/dx);
 c5 = round(pos5/dx);
 
-while (k < 215)
-    P = 10;
-    while (P < 11)
-        kc = 10;
-        while (kc < 11.5)
+    while (P < 10.6)
+        kc = 9.0;
+        while (kc < 9.6)
             r = 0;
 
             %Create necessary arrays
@@ -184,8 +182,6 @@ while (k < 215)
         end
         P = P + 0.1;
     end
-    k = k + 1;
-end
 
 
 

@@ -1,20 +1,20 @@
 %Uncomment line below for first run
-load('Day3Data.mat')
+%load('Day3Data.mat')
 
 %Constants
 d = 0.02565;
 a = d/2;
 L = 0.31;
-Ta = 20;
+Ta = 21;
 s = 5.67 * 10^(-8);
 
 p = 2700;
-e = 0.0;
 c = 902;
 
+e = 0.08;
 k = 200;
-P = 10.8;
-kc = 9.8;
+P = 10.2;
+kc = 9.2;
 
 UpTime = 60*10;
 DownTime = UpTime;
@@ -131,7 +131,7 @@ plot(time,S4, 'm')
 hold on
 plot(time,S5, 'k')
 hold on
-ylabel('Temperature')
+ylabel(['Temperature (' char(176) 'C)'])
 xlabel('Time (s)')
 
 hold on 
@@ -146,5 +146,31 @@ hold on
 plot(TimeE,SE5, 'k.')
 hold on
 
-title('Horizontal rod (e = 0, P = 10.8, kc = 9.8, k = 200)')
-legend('Sim S1', 'Sim S2', 'Sim S3', 'Sim S4', 'Sim S5', 'Data S1', 'Data S2', 'Data S3', 'Data S4', 'Data S5')
+legend('Sim Sensor 1', 'Sim Sensor 2', 'Sim Sensor 3', 'Sim Sensor 4', 'Sim Sensor 5', 'Data Sensor 1', 'Data Sensor 2', 'Data Sensor 3', 'Data Sensor 4', 'Data Sensor 5')
+
+
+            err = zeros(round(length(SE1)/500));
+            S1err = zeros(round(length(SE1)/500));
+            S2err = zeros(round(length(SE2)/500));
+            S3err = zeros(round(length(SE3)/500));
+            S4err = zeros(round(length(SE4)/500));
+            S5err = zeros(round(length(SE5)/500));
+            Timeerr = zeros(round(length(SE1)/500));
+            
+            count = 1;
+            
+            while (count < length(SE1))
+                if(mod(count,500) == 0)
+                    S1err(count/500) = SE1(count);
+                    
+                    Timeerr(count/500) = TimeE(count);
+                    err(count/500) = 1;
+                end
+                
+                count = count + 1;
+            end
+                    
+            errorbar(Timeerr, S1err,err, 'k', 'LineStyle','none', 'HandleVisibility','off', 'Linewidth', 2);
+ylim([15, 60])
+xlim([0,5000])
+   
