@@ -3,12 +3,12 @@
 #include <time.h>
 #include <math.h>
 
-#define LEFT_SENSOR PA_4
-#define RIGHT_SENSOR PA_5
+#define LEFT_SENSOR PB_0
+#define RIGHT_SENSOR PB_1
 #define LEFT_FORWARD_PIN PA_6
 #define LEFT_REVERSE_PIN PA_7
-#define RIGHT_FORWARD_PIN PB_1 
-#define RIGHT_REVERSE_PIN PB_0
+#define RIGHT_FORWARD_PIN PA_4 
+#define RIGHT_REVERSE_PIN PA_5
 #define TPWM 500
 #define CLOCKF 100000
 #define DIFTHRESH 5
@@ -31,17 +31,17 @@ void setup()
   pinMode(RIGHT_REVERSE_PIN, OUTPUT);
 
   //start going forwards
-  pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 200, 1);
-  pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 200, 1);
+  // pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 200, 1);
+  // pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 200, 1);
 }
 
 
 void loop()
 {
-    if(count == 5) {
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 1);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 1);
-    }
+    // if(count == 5) {
+    //   pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 1);
+    //   pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 1);
+    // }
 
     float leftSensor = analogRead(LEFT_SENSOR);
     float rightSensor = analogRead(RIGHT_SENSOR);
