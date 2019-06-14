@@ -1,0 +1,246 @@
+%Uncomment line below for first run
+load('Day3Data.mat')
+
+%Constants
+d = 0.02565;
+a = d/2;
+L = 0.31;
+s = 5.67 * 10^(-8);
+
+p = 2700;
+c = 902;
+
+Ta = 20.8;
+e = 0.0;
+k = 197;
+P = 10.3;
+kc = 9.5;
+
+
+UpTime = 60*10;
+DownTime = UpTime;
+switches = 8;
+TotalTime = UpTime*switches;
+sensorDiameter = 0.0048;
+
+%Sensor Positions
+pos3 = 0.15;
+pos4 = 0.221 - sensorDiameter/2 ;
+pos5 = 0.290 - sensorDiameter/2;
+pos2 = pos3 - 0.065;
+pos1 = pos2 - 0.065;
+
+
+%Declare step sizes 
+dt = 0.01;
+dx = sensorDiameter;
+N = round(L/dx) + 1;
+
+
+
+c1 = round(pos1/dx);
+c2 = round(pos2/dx);
+c3 = round(pos3/dx);
+c4 = round(pos4/dx);
+c5 = round(pos5/dx);
+
+%Create necessary arrays
+T = ones(1, N)*20;
+tT1 = ones(1, N)*20;
+tT2 = ones(1, N)*20;
+tT3 = ones(1, N)*20;
+tT4 = ones(1, N)*20;
+
+
+S1 = zeros(1,TotalTime/dt);
+S2 = zeros(1,TotalTime/dt);
+S3 = zeros(1,TotalTime/dt);
+S4 = zeros(1,TotalTime/dt);
+S5 = zeros(1,TotalTime/dt);
+
+dS1 = zeros(1,TotalTime/dt);
+dS2 = zeros(1,TotalTime/dt);
+dS3 = zeros(1,TotalTime/dt);
+dS4 = zeros(1,TotalTime/dt);
+dS5 = zeros(1,TotalTime/dt);
+
+x = [0:dx:L+dx];
+time = [0:dt:TotalTime-dt];
+
+dT = zeros(1,N);
+
+%Create variable j for time
+j=0;
+count = 1;
+
+powerON = 1;
+
+while (j < TotalTime)
+
+    if (j < UpTime+10)
+        powerIn = (P*dt)/(c*p*pi*a^2*dx);
+    elseif (j >= UpTime+10 && j < 2*UpTime+50)
+        powerIn = 0;
+    elseif (j >= 2*UpTime+50 && j < 3*UpTime+10)
+        powerIn = (P*dt)/(c*p*pi*a^2*dx);
+    elseif (j >= 3*UpTime+10 && j < 4*UpTime+20)
+        powerIn = 0;
+    elseif (j >= 4*UpTime+20 && j < 5*UpTime+40)
+        powerIn = (P*dt)/(c*p*pi*a^2*dx);
+    elseif (j >= 5*UpTime+40 && j < 6*UpTime+20)
+        powerIn = 0;
+    elseif (j >= 6*UpTime+20 && j < 7*UpTime+20)
+        powerIn = (P*dt)/(c*p*pi*a^2*dx);
+    elseif (j >= 7*UpTime+20 && j < 8*UpTime)
+        powerIn = 0;
+    end
+
+    S1(count) = T(c1);
+    S2(count) = T(c2);
+    S3(count) = T(c3);
+    S4(count) = T(c4);
+    S5(count) = T(c5);
+    
+        
+    %Calculate change in first and last slice
+    dT(1) = -k*dt*(T(1)-T(2))/(c*p*(dx)^2) + powerIn - ((2*pi*a*dx+pi*a^2)*kc*( T(abs(1)) - Ta) + (2*pi*a*dx+pi*a^2)*e*s*(( T(abs(1)) + 273)^4 - (Ta + 273)^4))*dt/(c*p*pi*a^2*dx);
+    dT(N) = k*dt*(T(N-1)-T(N))/(c*p*(dx)^2) - ((2*pi*a*dx+pi*a^2)*kc*( T(N) - Ta) + (2*pi*a*dx+pi*a^2)*e*s*(( T(N) + 273)^4 - (Ta + 273)^4))*dt/(c*p*pi*a^2*dx);
+   
+    %Calculate change in temperature for the middle slices
+    i = 2;
+    while (i < N)
+        dT(i) = (k*dt/(c*p))*(T(i-1)-2*(T(i))+T(i+1))/(dx^2) - (2*pi*a*dx*kc*( T(i) - Ta) + 2*pi*a*dx*e*s*(( T(i) + 273)^4 - (Ta + 273)^4))*dt/(c*p*pi*a^2*dx);
+        i = i + 1;
+    end
+    
+    dS1(count) = (k*dt/(c*p))*(T(c1-1)-T(c1))/(dx^2);
+    dS2(count) = (k*dt/(c*p))*(T(c2-1)-T(c2))/(dx^2);
+    dS3(count) = (k*dt/(c*p))*(T(c3-1)-T(c3))/(dx^2);
+    dS4(count) = (k*dt/(c*p))*(T(c4-1)-T(c4))/(dx^2);
+    dS5(count) = (k*dt/(c*p))*(T(c5-1)-T(c5))/(dx^2);
+    
+    %Add change in temperature to old temperature
+    i = 1;
+    while (i < N+1)
+      if (j <= 2*UpTime+50 && T(i) < (T(i)+dT(i)))
+             tT(i) = j;
+      end
+                  
+      if ((j >= 2*UpTime+50 && j <=4*UpTime+20) && T(i) < (T(i)+dT(i)))
+          tT2(i) = j;            
+      end
+      
+      if ((j >= 4*UpTime+20 && j <=6*UpTime+20) && T(i) < (T(i)+dT(i)))
+          tT3(i) = j;            
+      end
+      
+      if ((j >= 6*UpTime+50) && T(i) < (T(i)+dT(i)))
+          tT4(i) = j;            
+      end
+      
+      T(i) = T(i) + dT(i);
+      i = i + 1;
+    end
+    
+    %Increment time
+    j = j +dt;
+    
+    %Increment count for sensor indecies
+    count = count + 1;
+    
+end
+
+%Correct for extra time added
+ j = j - dt;
+ 
+%Create steady state plot
+figure();
+plot(time,S1, 'b')
+hold on
+plot(time,S2, 'r')
+hold on
+plot(time,S3, 'g')
+hold on
+plot(time,S4, 'm')
+hold on
+plot(time,S5, 'k')
+hold on
+ylabel(['Temperature (' char(176) 'C)'])
+xlabel('Time (s)')
+
+hold on 
+plot(TimeE,SE1, 'b.', 'HandleVisibility','off')
+hold on
+plot(TimeE,SE2, 'r.', 'HandleVisibility','off')
+hold on
+plot(TimeE,SE3, 'g.', 'HandleVisibility','off')
+hold on
+plot(TimeE,SE4, 'm.', 'HandleVisibility','off')
+hold on
+plot(TimeE,SE5, 'k.', 'HandleVisibility','off')
+hold on
+
+legend('Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Sensor 5', 'Orientation', 'horizontal', 'Location', 'south')
+
+
+            err = zeros(round(length(SE1)/500));
+            S1err = zeros(round(length(SE1)/500));
+            S2err = zeros(round(length(SE2)/500));
+            S3err = zeros(round(length(SE3)/500));
+            S4err = zeros(round(length(SE4)/500));
+            S5err = zeros(round(length(SE5)/500));
+            Timeerr = zeros(round(length(SE1)/500));
+            
+            count = 1;
+            
+            while (count < length(SE1))
+                if(mod(count,500) == 0)
+                    S1err(count/500) = SE1(count);
+                    
+                    Timeerr(count/500) = TimeE(count);
+                    err(count/500) = 1;
+                end
+                
+                count = count + 1;
+            end
+                    
+            errorbar(Timeerr, S1err,err, 'k', 'LineStyle','none', 'HandleVisibility','off', 'Linewidth', 2);
+ylim([15, 60])
+xlim([0,5000])
+
+figure();
+plot(time,dS1, 'b')
+hold on
+plot(time,dS2, 'r')
+hold on
+plot(time,dS3, 'g')
+hold on
+plot(time,dS4, 'm')
+hold on
+plot(time,dS5, 'k')
+hold on
+ylabel(['Change in Temperature (' char(176) 'C)'])
+xlabel('Time (s)')
+legend('Sensor 1', 'Sensor 2', 'Sensor 3', 'Sensor 4', 'Sensor 5', 'Orientation', 'horizontal', 'Location', 'south')
+
+v = sqrt((2*k*2*pi/2*UpTime)/(c*p));
+slope = 1/v;
+
+hold off;
+figure();
+hold on;
+plot(x,tT-10,'k')
+hold on;
+plot(x,tT2-2*UpTime-10,'r')
+hold on;
+plot(x,tT3-4*UpTime-40,'g')
+hold on;
+plot(x,tT4-6*UpTime-20,'m')
+hold on 
+line([0 0.3], [600 925])
+xlim([0 0.3])
+ylim([550 930])
+xlabel('Position (m)')
+ylabel('Time of Peak Temperature (s)')
+legend('First Period', 'Second Period', 'Third Period', 'Fourth Period', 'Theoretical Velocity', 'Orientation', 'horizontal', 'Location', 'south' )
+   
