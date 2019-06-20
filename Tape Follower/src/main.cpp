@@ -5,18 +5,18 @@
 
 #define LEFT_SENSOR PA3
 #define RIGHT_SENSOR PA2
-#define RIGHT_REVERSE_PIN PA_7
-#define RIGHT_FORWARD_PIN PA_6
-#define LEFT_REVERSE_PIN PB_1 
-#define LEFT_FORWARD_PIN PB_0
+#define RIGHT_REVERSE_PIN PA_7 //GRAY WIRE
+#define LEFT_FORWARD_PIN PA_6 //BROWN WIRE
+#define LEFT_REVERSE_PIN PB_1 // ORANGE WIRE
+#define RIGHT_FORWARD_PIN PB_0 //BLUE WIRE
 #define TPWM 500
 #define CLOCKF 100000
 
 #define DIFTHRESH 100
-#define REG_SPEED 125
+#define REG_SPEED 175
 
-#define KP 25
-#define KD 0
+#define KP 2
+#define KD .5
 
 float previousError = 0;
 float error = 0.0;
@@ -31,14 +31,14 @@ void setup()
   pinMode(LEFT_FORWARD_PIN, OUTPUT);
   pinMode(LEFT_REVERSE_PIN, OUTPUT);
   pinMode(RIGHT_FORWARD_PIN, OUTPUT);
-  pinMode(RIGHT_REVERSE_PIN, OUTPUT);
+  pinMode(LEFT_REVERSE_PIN, OUTPUT); 
   pinMode(LEFT_SENSOR, INPUT_ANALOG);
   pinMode(RIGHT_SENSOR, INPUT_ANALOG);
 
   //start going forwards
   // digitalWrite(LEFT_FORWARD_PIN, HIGH);
-  pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 70, 1);
-  pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 70, 1);
+  pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
+  pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
 }
 
 void loop()
@@ -47,19 +47,21 @@ void loop()
     float rightSensor = analogRead(RIGHT_SENSOR);
     float previousError = error;
 
+    // if(count % 10000 == 0) {
     // Serial.println("Left: "); Serial.println(leftSensor);
     // Serial.println("Right: "); Serial.println(rightSensor);
+    // }
 
     if (rightSensor < DIFTHRESH && leftSensor < DIFTHRESH) {
         if (previousError < 0){
-            error = -5;
+            error = 2 * (rightSensor - DIFTHRESH);
         } else {
-            error = 5;
+            error = 2 * (DIFTHRESH - leftSensor);
         }
     } else if (leftSensor < DIFTHRESH){
-      error = 1;
+      error = DIFTHRESH - leftSensor;
     } else if (rightSensor < DIFTHRESH) {
-      error = -1;
+      error = (rightSensor - DIFTHRESH);
     } else {
       error = 0;
     }
@@ -81,4 +83,5 @@ void loop()
     }
     Serial.print("Error: ");
     Serial.println(error);
-}
+    count++;
+ }
