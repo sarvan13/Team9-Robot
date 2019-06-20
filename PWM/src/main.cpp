@@ -26,21 +26,41 @@ void setup()
 void loop()
 {
     
-    float cntrl = analogRead(CNTRL_PIN);
+    // float cntrl = analogRead(CNTRL_PIN);
 
-    Serial.println(cntrl);
+    // Serial.println(cntrl);
 
-    if (abs(cntrl - previousControl) > DIFTHRESH) {
-        if(cntrl < 512){
-            pwm_start(REVERSE_PIN, CLOCKF, TPWM, (512-cntrl)/(512)*TPWM, 1);
-            pwm_start(FORWARD_PIN, CLOCKF, TPWM, 0, 1);
-        }
-        else{
-            pwm_start(FORWARD_PIN, CLOCKF, TPWM, (cntrl-512)/(512)*TPWM, 1);
-            pwm_start(REVERSE_PIN, CLOCKF, TPWM, 0, 1);
-        }
+    // if (abs(cntrl - previousControl) > DIFTHRESH) {
+    //     if(cntrl < 512){
+    //         pwm_start(REVERSE_PIN, CLOCKF, TPWM, (512-cntrl)/(512)*TPWM, 1);
+    //         pwm_start(FORWARD_PIN, CLOCKF, TPWM, 0, 1);
+    //     }
+    //     else{
+    //         pwm_start(FORWARD_PIN, CLOCKF, TPWM, (cntrl-512)/(512)*TPWM, 1);
+    //         pwm_start(REVERSE_PIN, CLOCKF, TPWM, 0, 1);
+    //     }
         
-        previousControl = cntrl;
-    } 
-
+    //     previousControl = cntrl;
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 450, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 450, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 400, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 400, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 300, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 300, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 200, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 200, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 100, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 100, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 50, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 50, 1);
+    delay(1000);
+    pwm_start(REVERSE_PIN, CLOCKF, TPWM, 0, 1);
+    pwm_start(FORWARD_PIN, CLOCKF, TPWM, 0, 1);
+    
 }
