@@ -13,7 +13,7 @@
 #define CLOCKF 100000
 
 #define DIFTHRESH 100
-#define REG_SPEED 175
+#define REG_SPEED 150
 
 #define KP 2
 #define KD .5
@@ -43,45 +43,44 @@ void setup()
 
 void loop()
 {
-    float leftSensor = analogRead(LEFT_SENSOR);
-    float rightSensor = analogRead(RIGHT_SENSOR);
-    float previousError = error;
+    // float leftSensor = analogRead(LEFT_SENSOR);
+    // float rightSensor = analogRead(RIGHT_SENSOR);
+    // float previousError = error;
 
-    // if(count % 10000 == 0) {
-    // Serial.println("Left: "); Serial.println(leftSensor);
-    // Serial.println("Right: "); Serial.println(rightSensor);
+    // // if(count % 10000 == 0) {
+    // // Serial.println("Left: "); Serial.println(leftSensor);
+    // // Serial.println("Right: "); Serial.println(rightSensor);
+    // // }
+
+    // if (rightSensor < DIFTHRESH && leftSensor < DIFTHRESH) {
+    //     if (previousError < 0){
+    //         error = 2 * (rightSensor - DIFTHRESH);
+    //     } else {
+    //         error = 2 * (DIFTHRESH - leftSensor);
+    //     }
+    // } else if (leftSensor < DIFTHRESH){
+    //   error = DIFTHRESH - leftSensor;
+    // } else if (rightSensor < DIFTHRESH) {
+    //   error = (rightSensor - DIFTHRESH);
+    // } else {
+    //   error = 0;
     // }
 
-    if (rightSensor < DIFTHRESH && leftSensor < DIFTHRESH) {
-        if (previousError < 0){
-            error = 2 * (rightSensor - DIFTHRESH);
-        } else {
-            error = 2 * (DIFTHRESH - leftSensor);
-        }
-    } else if (leftSensor < DIFTHRESH){
-      error = DIFTHRESH - leftSensor;
-    } else if (rightSensor < DIFTHRESH) {
-      error = (rightSensor - DIFTHRESH);
-    } else {
-      error = 0;
-    }
+    // float p = KP * error;
+    // float d = KD * (error - previousError);
+    // // float d = 0;
+    // float g = p + d;
 
-    float p = KP * error;
-    float d = KD * (error - previousError);
-    // float d = 0;
-    float g = p + d;
-
-    if(error > 0){
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED + g, 0);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-    }else if(error < 0){
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED - g, 0);
-    }else {
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-    }
-    Serial.print("Error: ");
-    Serial.println(error);
-    count++;
+    // if(error > 0){
+    //   pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED + g, 0);
+    //   pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
+    // }else if(error < 0){
+    //   pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
+    //   pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED - g, 0);
+    // }else {
+    //   pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
+    //   pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
+    // }
+    // Serial.print("Error: ");
+    // Serial.println(error);
  }
