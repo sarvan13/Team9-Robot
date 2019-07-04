@@ -3,12 +3,14 @@
 #include <time.h>
 #include <math.h>
 
-#define LEFT_SENSOR PA3
-#define RIGHT_SENSOR PA2
-#define RIGHT_REVERSE_PIN PA_7 //GRAY WIRE
-#define LEFT_FORWARD_PIN PA_6 //BROWN WIRE
-#define LEFT_REVERSE_PIN PB_1 // ORANGE WIRE
-#define RIGHT_FORWARD_PIN PB_0 //BLUE WIRE
+#define MULTIPLEX_OUT PA_0
+#define A PB_3
+#define B PB_4
+#define C PB_5
+// #define LEFT_REVERSE_PIN PA_6 //ORANGE WIRE
+#define LEFT_FORWARD_PIN PA_7 //YELLOW WIRE
+// #define RIGHT_FORWARD_PIN PB_1 // red
+// #define RIGHT_REVERSE_PIN PB_0 //brown
 #define TPWM 500
 #define CLOCKF 100000
 
@@ -29,42 +31,47 @@ void setup()
 
   // initialize LED digital pin as an output.
   pinMode(LEFT_FORWARD_PIN, OUTPUT);
-  pinMode(LEFT_REVERSE_PIN, OUTPUT);
-  pinMode(RIGHT_FORWARD_PIN, OUTPUT);
-  pinMode(LEFT_REVERSE_PIN, OUTPUT); 
-  pinMode(LEFT_SENSOR, INPUT_ANALOG);
-  pinMode(RIGHT_SENSOR, INPUT_ANALOG);
+  // pinMode(LEFT_REVERSE_PIN, OUTPUT);
+  // pinMode(RIGHT_FORWARD_PIN, OUTPUT);
+  // pinMode(RIGHT_REVERSE_PIN, OUTPUT); 
+  pinMode(MULTIPLEX_OUT, INPUT_ANALOG);
+  pinMode(A,OUTPUT);
+  pinMode(B,OUTPUT);
+  pinMode(C,OUTPUT);
 
   //start going forwards
   // digitalWrite(LEFT_FORWARD_PIN, HIGH);
-  pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
-  pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
+  // pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
+  // pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 1);
 }
 
 void loop()
 {
-    // float leftSensor = analogRead(LEFT_SENSOR);
-    // float rightSensor = analogRead(RIGHT_SENSOR);
-    // float previousError = error;
+    digitalWrite(A, LOW);
+    digitalWrite(B, LOW);
+    digitalWrite(C, LOW);
+    float leftSensor = analogRead(MULTIPLEX_OUT);
+    digitalWrite(B, HIGH);
+    digitalWrite(A, HIGH);
+    float rightSensor = analogRead(MULTIPLEX_OUT);
+    float previousError = error;
 
-    // // if(count % 10000 == 0) {
-    // // Serial.println("Left: "); Serial.println(leftSensor);
-    // // Serial.println("Right: "); Serial.println(rightSensor);
-    // // }
+    Serial.println("Left: "); Serial.println(leftSensor);
+    Serial.println("Right: "); Serial.println(rightSensor);
 
-    // if (rightSensor < DIFTHRESH && leftSensor < DIFTHRESH) {
-    //     if (previousError < 0){
-    //         error = 2 * (rightSensor - DIFTHRESH);
-    //     } else {
-    //         error = 2 * (DIFTHRESH - leftSensor);
-    //     }
-    // } else if (leftSensor < DIFTHRESH){
-    //   error = DIFTHRESH - leftSensor;
-    // } else if (rightSensor < DIFTHRESH) {
-    //   error = (rightSensor - DIFTHRESH);
-    // } else {
-    //   error = 0;
-    // }
+    if (rightSensor < DIFTHRESH && leftSensor < DIFTHRESH) {
+        if (previousError < 0){
+            error = 2 * (rightSensor - DIFTHRESH);
+        } else {
+            error = 2 * (DIFTHRESH - leftSensor);
+        }
+    } else if (leftSensor < DIFTHRESH){
+      error = DIFTHRESH - leftSensor;
+    } else if (rightSensor < DIFTHRESH) {
+      error = (rightSensor - DIFTHRESH);
+    } else {
+      error = 0;
+    }
 
     // float p = KP * error;
     // float d = KD * (error - previousError);
@@ -81,6 +88,7 @@ void loop()
     //   pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
     //   pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
     // }
-    // Serial.print("Error: ");
-    // Serial.println(error);
+    Serial.print("Error: ");
+    Serial.println(error);
+    delay(500);
  }
