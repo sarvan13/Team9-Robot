@@ -13,7 +13,7 @@
 #define LEFT_REVERSE_PIN PA_6 //ORANGE WIRE
 #define LEFT_FORWARD_PIN PA_7 //YELLOW WIRE
 #define RIGHT_FORWARD_PIN PB_1 // red
-#define RIGHT_REVERSE_PIN PB_0 //brown
+#define RIGHT_REVERSE_PIN PB_0 //brown  
 #define KP_PIN PA_3 //yellow
 #define KD_PIN PA_2 //orange
 #define TEST PB_13
@@ -23,8 +23,11 @@
 #define RIGHT_SENSOR PA_4
 #define MIDDLE_SENSOR PA_1
 
+//KP 486   KD 109
+
 #define DIFTHRESH 250
-#define REG_SPEED 150
+#define REG_SPEED 100
+#define POT_THRESH 5
 
 
 float previousError = 0;
@@ -35,7 +38,8 @@ int count = 0;
 #define OLED_RESET -1
 Adafruit_SSD1306 display(OLED_RESET);
 
-
+float KPPrev = 0.0;
+float KDPrev = 0.0;
 void setup()
 {
   Serial.begin(115200);
@@ -128,13 +132,20 @@ void loop()
 
     double KP = (float) analogRead(KP_PIN);
     double KD = (float) analogRead(KD_PIN);
-    // display.clearDisplay();
-    // display.setFont(&FreeMono9pt7b);
-    // display.setCursor(4,20);
-    // display.print("KP: "); display.println(KP);
-    // display.setCursor(4,50);
-    // display.print("KD: "); display.println(KD);
-    // display.display();
+    
+    if (abs(KP - KPPrev) > POT_THRESH || abs(KD-KDPrev) > POT_THRESH) {
+      display.clearDisplay();
+      display.setFont(&FreeMono9pt7b);
+      display.setCursor(4,20);
+      display.print("KP: "); display.println(KP);
+      display.setCursor(4,50);
+      display.print("KD: "); display.println(KD);
+      display.display();
+      KPPrev = KP;
+      KDPrev = KD;
+      Serial.println("Hi");
+    }
+    Serial.println(KP);Serial.println(KD);
 
     float p = KP * error;
     float d = KD * (error - previousError);
@@ -142,18 +153,18 @@ void loop()
     float g = (p + d) / 15.0;
 
     if(error < 0){
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED - g, 0);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-      Serial.println("goes right");
-      Serial.println(g);
+      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED - g/2, 0);
+      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED + g/2, 0);
+      // Serial.println("goes right");
+      // Serial.println(g);
     }else if(error > 0){
-      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED + g, 0);
-      Serial.println("goes left");
-      Serial.println(g);
+      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED - g/2, 0);
+      pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED + g/2, 0);
+      // Serial.println("goes left");
+      // Serial.println(g);
     }else {
       pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
       pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, REG_SPEED, 0);
-      Serial.println(TPWM); Serial.println(REG_SPEED);
+      // Serial.println(TPWM); Serial.println(REG_SPEED);
     }
  }
