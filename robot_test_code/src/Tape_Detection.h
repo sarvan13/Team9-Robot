@@ -19,7 +19,6 @@ enum marker_state
     
 class Tape_Detection
 {
-    
     public:
         Tape_Detection();
         int get_pid();
@@ -33,8 +32,6 @@ class Tape_Detection
     private:
         float error = 0;
         float previous_error = 0;
-        PID pid;
-    
 };
 
 

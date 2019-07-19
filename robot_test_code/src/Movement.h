@@ -14,6 +14,7 @@ class Movement
         void grab_plushie_left();
         void grab_plushie_right();
         void grab_plushie_front();
+        void stop();
         
 };
 

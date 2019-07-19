@@ -31,106 +31,145 @@ int num_stones = 0;
 
 Tape_Detection tape_detection;
 Movement movement;
-Communication comm;
-Sonar sonar;
+// Communication comm;
+// Sonar sonar;
 
 void setup()
 {
   Serial.begin(115200);
 
-  // initialize LED digital pin as an output.
-  pinMode(STATE_INTERRUPT, INPUT_PULLUP);
+  //initialize LED digital pin as an output.
+  // pinMode(STATE_INTERRUPT, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
 
-  attachInterrupt(STATE_INTERRUPT, handle_state, RISING);
+  // attachInterrupt(STATE_INTERRUPT, handle_state, RISING); 
+  // movement.forward();
+}
 
-  //start going forwards
-  // digitalWrite(LEFT_FORWARD_PIN, HIGH);
-
-  movement.forward();
-  
-  }
 
 void loop()
 {
-  if(progress == RAMP_STATE){
-    for(int i = 0; i < 2; i++){
-      while(tape_detection.branch_exists() == NO_BRANCH)
-      {
-        movement.apply_pid(tape_detection.get_pid());
-      }
-      if(tape_detection.branch_side == RIGHT_BRANCH){
-        movement.turn_right();
-        while(tape_detection.get_path_error() < 3){
+  // tape_detection.get_path_error();
+  // tape_detection.branch_exists();
+// movement.apply_pid(tape_detection.get_pid());
+// tape_detection.branch_exists();
 
-        }
-        while(tape_detection.get_path_error() > 0){
+//  tape_detection.branch_exists();
+//  tape_detection.get_path_error();
+  // if(progress == RAMP_STATE){
+  //   /*  movement.apply_pid(tape_detection.get_pid());
+  //   for(int i = 0; i < 2; i++){
+  //     movement.apply_pid(tape_detection.get_pid());
+  //     while(tape_detection.branch_exists() == NO_BRANCH)
+  //     {
+  //       movement.apply_pid(tape_detection.get_pid());
+  //     }
+  //     if(tape_detection.branch_side == RIGHT_BRANCH){
+  //       movement.turn_right();
+  //       while(tape_detection.get_path_error() < 4){
 
-        }
-      }else if(tape_detection.branch_side == LEFT_BRANCH){
-        movement.turn_left();
-      }
-    }
-    progress = NORMAL;
-  }else if(progress == NORMAL){
-    if(num_stones >= 2){
-      progress = SANCTUM_TO;
-    }
-    while(sonar.check_sonar() == NO_DETECTION && tape_detection.marker_exists() == NO_BRANCH){
-      movement.apply_pid(tape_detection.get_pid());
-    }
-    if(sonar.sonar_value > 4){
-      progress = AVOID_COLLISION;
-    }else if(sonar.sonar_value <= 4){
-      progress = GRAB_PLUSHIE;
-    }else if(tape_detection.marker_side){
-      progress = GRAB_STONE;
-    }
-  } else if(progress == AVOID_COLLISION){
+  //       }
+  //       while(tape_detection.get_path_error() > 0){
 
-  } else if(progress == GRAB_PLUSHIE){
-    switch(sonar.sonar_value){
-        case PLUSHIE_LEFT:
-            movement.grab_plushie_left();
-            break;
-        case PLUSHIE_RIGHT:
-            movement.grab_plushie_right();
-            break;
-        case PLUSHIE_FRONT:
-            movement.grab_plushie_front();
-            break;
-        default:
-            return;
-    }
-  } else if(progress == GRAB_STONE){
-    //align_marker
-    comm.master_transmit_stone();
-    comm.master_request();
-    num_stones++;
-  } else if(progress == SANCTUM_TO){
-    //reverse then 90 degree turn into sanctum, align to middle of sanctum hopefully
-    progress = SANCTUM_FROM;
-  }else if(progress == SANCTUM_FROM){
-    //U-TURN straight back onto the tape
-    //essentially a do while loop until one of the sensors trigger on the tape
-    progress = GAUNTLET;
-  }else if(progress == GAUNTLET){
-    for(int i = 0; i < 2; i++){
-      while(tape_detection.branch_exists() == NO_BRANCH){
-        movement.apply_pid(tape_detection.get_pid());
-      }
-      if(tape_detection.branch_side == RIGHT_BRANCH){
+  //       }
+  //     }else if(tape_detection.branch_side == LEFT_BRANCH){
+  //       movement.turn_left();
+  //     }
+  //   }*/
+  //   for(int i = 0; i < 2; i++){
+  //   while(tape_detection.branch_exists() == NO_BRANCH || tape_detection.branch_side == RIGHT_BRANCH)
+  //   {
+  //     movement.apply_pid(tape_detection.get_pid());
+  //   }
+  //   if(tape_detection.branch_side == LEFT_BRANCH) {
+  //     Serial.println("left branch detected");
+  //     movement.stop();
+  //     delay(200);
+  //     movement.turn_left();
+  //     delay(150);
+  //     while(tape_detection.get_path_error() !=0){
 
-      }
-      if(tape_detection.branch_side == LEFT_BRANCH){
+  //     }
+  //   }
+  //   // if(tape_detection.branch_side == RIGHT_BRANCH){
+  //     // movement.turn_left();
+  //     // delay(500);
+  //     // while(tape_detection.get_path_error() != 0){
 
-      }
-    }
-    movement.reverse();
-    comm.master_transmit_gauntlet();
-    comm.master_request();
-    progress = NORMAL;
-  }
+  //     // }
+  //   // } else {
+  //   //   progress = NORMAL;
+  //   // }
+  //   // progress = NORMAL;
+  //   }
+  // progress = NORMAL;
+
+  // } else if(progress == NORMAL){
+  //   movement.apply_pid(tape_detection.get_pid());
+  // }
+  
+  
+  // }else if(progress == NORMAL){
+  //   if(num_stones >= 2){
+  //     progress = SANCTUM_TO;
+  //   }
+  //   while(sonar.check_sonar() == NO_DETECTION && tape_detection.marker_exists() == NO_BRANCH){
+  //     movement.apply_pid(tape_detection.get_pid());
+  //   }
+  //   if(sonar.sonar_value > 4){
+  //     progress = AVOID_COLLISION;
+  //   }else if(sonar.sonar_value <= 4){
+  //     progress = GRAB_PLUSHIE;
+  //   }else if(tape_detection.marker_side){
+  //     progress = GRAB_STONE;
+  //   }
+  // } else if(progress == AVOID_COLLISION){
+
+  // } else if(progress == GRAB_PLUSHIE){
+  //   switch(sonar.sonar_value){
+  //       case PLUSHIE_LEFT:
+  //           movement.grab_plushie_left();
+  //           break;
+  //       case PLUSHIE_RIGHT:
+  //           movement.grab_plushie_right();
+  //           break;
+  //       case PLUSHIE_FRONT:
+  //           movement.grab_plushie_front();
+  //           break;
+  //       default:
+  //           return;
+  //   }
+  // } else if(progress == GRAB_STONE){
+  //   //align_marker
+  //   comm.master_transmit_stone();
+  //   comm.master_request();
+  //   num_stones++;
+  // } else if(progress == SANCTUM_TO){
+  //   //reverse then 90 degree turn into sanctum, align to middle of sanctum hopefully
+  //   progress = SANCTUM_FROM;
+  // }else if(progress == SANCTUM_FROM){
+  //   //U-TURN straight back onto the tape
+  //   //essentially a do while loop until one of the sensors trigger on the tape
+  //   progress = GAUNTLET;
+  // }else if(progress == GAUNTLET){
+  //   for(int i = 0; i < 2; i++){
+  //     while(tape_detection.branch_exists() == NO_BRANCH){
+  //       movement.apply_pid(tape_detection.get_pid());
+  //     }
+  //     if(tape_detection.branch_side == RIGHT_BRANCH){
+
+  //     }
+  //     if(tape_detection.branch_side == LEFT_BRANCH){
+
+  //     }
+  //   }
+  //   movement.reverse();
+  //   comm.master_transmit_gauntlet();
+  //   comm.master_request();
+  //   progress = NORMAL;
+  // }
+  
+
 }
 
 void handle_state(){
