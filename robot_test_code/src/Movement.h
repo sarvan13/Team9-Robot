@@ -15,7 +15,12 @@ class Movement
         void grab_plushie_right();
         void grab_plushie_front();
         void stop();
-        
+        void set_speed(int speed);
+        void rotate_forward();
+        void rotate_backward();
+    
+    private:
+        int reg_speed;
 };
 
 enum movement_amount

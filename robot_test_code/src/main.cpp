@@ -11,7 +11,10 @@
 
 #define STATE_INTERRUPT PA_5
 
+#define COUNTER_THRESH 100
+
 void handle_state(); //implement built in led
+void align_marker();
 
 enum progression_state
 {
@@ -28,6 +31,7 @@ enum progression_state
 int state = 0; 
 progression_state progress = RAMP_STATE; //states are ramp_state, normal, sanctum_to, sanctum_from, gauntlet, can probably change to enum
 int num_stones = 0;
+int counter = 0;
 
 Tape_Detection tape_detection;
 Movement movement;
@@ -50,62 +54,44 @@ void setup()
 void loop()
 {
   // tape_detection.get_path_error();
-  // tape_detection.branch_exists();
+  tape_detection.branch_exists();
 // movement.apply_pid(tape_detection.get_pid());
 // tape_detection.branch_exists();
 
 //  tape_detection.branch_exists();
-//  tape_detection.get_path_error();
+// 
   // if(progress == RAMP_STATE){
-  //   /*  movement.apply_pid(tape_detection.get_pid());
   //   for(int i = 0; i < 2; i++){
-  //     movement.apply_pid(tape_detection.get_pid());
-  //     while(tape_detection.branch_exists() == NO_BRANCH)
+  //     while(tape_detection.branch_exists() == NO_BRANCH || tape_detection.branch_side == LEFT_BRANCH)
   //     {
   //       movement.apply_pid(tape_detection.get_pid());
   //     }
-  //     if(tape_detection.branch_side == RIGHT_BRANCH){
+  //     if(tape_detection.branch_side == RIGHT_BRANCH) {
+  //       Serial.println("right branch detected");
+  //       movement.stop();
+  //       delay(200);
   //       movement.turn_right();
-  //       while(tape_detection.get_path_error() < 4){
+  //       delay(150);
+  //       movement.set_speed(150);
+  //       while(tape_detection.get_path_error() !=0){
 
   //       }
-  //       while(tape_detection.get_path_error() > 0){
-
-  //       }
-  //     }else if(tape_detection.branch_side == LEFT_BRANCH){
-  //       movement.turn_left();
   //     }
-  //   }*/
-  //   for(int i = 0; i < 2; i++){
-  //   while(tape_detection.branch_exists() == NO_BRANCH || tape_detection.branch_side == RIGHT_BRANCH)
-  //   {
-  //     movement.apply_pid(tape_detection.get_pid());
-  //   }
-  //   if(tape_detection.branch_side == LEFT_BRANCH) {
-  //     Serial.println("left branch detected");
-  //     movement.stop();
-  //     delay(200);
-  //     movement.turn_left();
-  //     delay(150);
-  //     while(tape_detection.get_path_error() !=0){
-
-  //     }
-  //   }
-  //   // if(tape_detection.branch_side == RIGHT_BRANCH){
-  //     // movement.turn_left();
-  //     // delay(500);
-  //     // while(tape_detection.get_path_error() != 0){
-
-  //     // }
-  //   // } else {
-  //   //   progress = NORMAL;
-  //   // }
-  //   // progress = NORMAL;
   //   }
   // progress = NORMAL;
-
   // } else if(progress == NORMAL){
-  //   movement.apply_pid(tape_detection.get_pid());
+  //   movement.set_speed(300);
+  //   while(!(tape_detection.marker_exists() & RIGHT_ON)){
+  //       movement.apply_pid(tape_detection.get_pid());
+  //   }
+  //   if(tape_detection.marker_side){
+  //     progress = GRAB_STONE;
+  //   }
+  // } else if(progress == GRAB_STONE){
+  //   while(!(tape_detection.get_marker_error() & ALL_ON)){
+  //     align_marker();
+  //   }
+  //   movement.stop();
   // }
   
   
@@ -123,6 +109,7 @@ void loop()
   //   }else if(tape_detection.marker_side){
   //     progress = GRAB_STONE;
   //   }
+  // }
   // } else if(progress == AVOID_COLLISION){
 
   // } else if(progress == GRAB_PLUSHIE){
@@ -181,6 +168,14 @@ void handle_state(){
   }
 }
 
+void align_marker(){
+    if(counter < COUNTER_THRESH){
+        movement.rotate_forward();
+    }else{
+        movement.rotate_backward();
+    }
+    counter++;
+}
 
 
 

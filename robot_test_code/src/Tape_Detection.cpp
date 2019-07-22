@@ -10,17 +10,18 @@
 #define A PB12  // Left = 000 - Right = 
 #define B PB13
 #define C PB14
+#define MULTIPLEX_OUT2 PA4
 #define TAPEFOLLOWTHRESH 500
 #define LEFT_THRESH 800
 #define RIGHT_THRESH 800
 
 #define HARDCODE_KP 120 //240
-#define HARDCODE_KD 25 //50
+#define HARDCODE_KD 25//50
 #define COUNTER_VAL 0
-
 
 Tape_Detection::Tape_Detection(){
     pinMode(MULTIPLEX_OUT, INPUT_ANALOG);
+    pinMode(MULTIPLEX_OUT2, INPUT_ANALOG);
     pinMode(A, OUTPUT);
     pinMode(B, OUTPUT);
     pinMode(C, OUTPUT);
@@ -63,27 +64,29 @@ branch_state Tape_Detection::branch_exists(){
   }
 }
 
-marker_state Tape_Detection::marker_exists(){
-  float sideRightSensor1 = analogRead(MULTIPLEX_OUT);
-  float sideRightSensor2 = analogRead(MULTIPLEX_OUT);
-  float sideRightSensor3 = analogRead(MULTIPLEX_OUT);
-  float sideLeftSensor1 = analogRead(MULTIPLEX_OUT);
-  float sideLeftSensor2 = analogRead(MULTIPLEX_OUT);
-  float sideLeftSensor3 = analogRead(MULTIPLEX_OUT);
+int Tape_Detection::marker_exists(){
+  int error = 0;
+  float front_right_sensor = analogRead(MULTIPLEX_OUT2);
+  float back_right_sensor = analogRead(MULTIPLEX_OUT2);
+  float right_sensor = analogRead(MULTIPLEX_OUT2);
+  // float sideLeftSensor1 = analogRead(MULTIPLEX_OUT2);
+  // float sideLeftSensor2 = analogRead(MULTIPLEX_OUT2);
+  // float sideLeftSensor3 = analogRead(MULTIPLEX_OUT2);
 
-  if(sideLeftSensor1 > TAPEFOLLOWTHRESH || sideLeftSensor2 > TAPEFOLLOWTHRESH || sideLeftSensor3 > TAPEFOLLOWTHRESH){
-    return LEFT_MARKER;
-  }else if(sideRightSensor1 > TAPEFOLLOWTHRESH || sideRightSensor2 > TAPEFOLLOWTHRESH || sideRightSensor3 > TAPEFOLLOWTHRESH){
-    return RIGHT_MARKER;
-  }else{
-    return NO_MARKER;
+  // if(sideLeftSensor1 > TAPEFOLLOWTHRESH || sideLeftSensor2 > TAPEFOLLOWTHRESH || sideLeftSensor3 > TAPEFOLLOWTHRESH){
+  //   return LEFT_MARKER;
+  //} else
+  if(right_sensor > TAPEFOLLOWTHRESH){
+    error |= RIGHT_ON;
   }
+  marker_error = error;
+  return error;
 }
 
 int Tape_Detection::get_pid(){
-    error = get_path_error();
-    float p =  HARDCODE_KP * error;
-    float d =  HARDCODE_KD * (error - previous_error);
+    path_error = get_path_error();
+    float p =  HARDCODE_KP * path_error;
+    float d =  HARDCODE_KD * (path_error - previous_path_error);
     return p + d; // = g
 }
 
@@ -107,29 +110,38 @@ int Tape_Detection::get_path_error(){
   Serial.print(mainRightSensor); Serial.print(" ");
 
 
-  previous_error = error;
+  previous_path_error = path_error;
    if (mainRightSensor < TAPEFOLLOWTHRESH && mainLeftSensor < TAPEFOLLOWTHRESH && mainMiddleSensor < TAPEFOLLOWTHRESH) {
-        if (previous_error < 0){
-            error = -4;
+        if (previous_path_error < 0){
+            path_error = -4;
         } else {
-            error = 4;
+            path_error = 4;
         }
   } else if (mainLeftSensor < TAPEFOLLOWTHRESH && mainMiddleSensor < TAPEFOLLOWTHRESH){
-      error = -2;
+      path_error = -2;
   } else if (mainLeftSensor < TAPEFOLLOWTHRESH) {
-      error = -1;
+      path_error = -1;
   } else if (mainRightSensor< TAPEFOLLOWTHRESH && mainMiddleSensor < TAPEFOLLOWTHRESH) {
-      error = 2;
+      path_error = 2;
   } else if (mainRightSensor< TAPEFOLLOWTHRESH) {
-      error = 1;
+      path_error = 1;
   } else {
-      error = 0;
+      path_error = 0;
   }
-  Serial.println(error); 
-  return error;
+  Serial.println(path_error); 
+  return path_error;
 }
 
 int Tape_Detection::get_marker_error(){
+  float front_right_marker = analogRead(MULTIPLEX_OUT2);
+  float back_right_marker = analogRead(MULTIPLEX_OUT2);
+  float corner_right_marker = analogRead(MULTIPLEX_OUT2);
+  int error = 0;
+  if(front_right_marker > TAPEFOLLOWTHRESH && back_right_marker > TAPEFOLLOWTHRESH && corner_right_marker > TAPEFOLLOWTHRESH){
+    error |= ALL_ON;
+  }
+
+  return error;
 
 }
 
