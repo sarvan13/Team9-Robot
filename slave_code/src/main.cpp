@@ -57,12 +57,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("fuck");
   larry.move_larry(100);
-  open_claw();
+  //open_claw();
   delay(1000);
   //larry.go_home_larry();
   larry.go_far_larry();
   delay(500);
-  close_claw();
+  //close_claw();
   delay(1000);
   
 }
@@ -75,7 +75,7 @@ void handle_encoder_interrupt(){
     larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
   }
 
-  // Serial.println(larry.current_position);
+  //Serial.println(larry.current_position);
 }
 
 void open_claw(){

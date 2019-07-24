@@ -20,7 +20,7 @@
 // #define TICKS_PER_REV 24.0 
 // #define DISTANCE_PER_REV 5.0 //mm (perhaps)
 
-#define MAX_DISTANCE 105 //mm
+#define MAX_DISTANCE 100 //mm
 
 #define REG_SPEED 500
 #define TPWM 500
