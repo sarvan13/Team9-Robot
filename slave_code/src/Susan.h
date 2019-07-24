@@ -3,10 +3,13 @@
 class Susan
 {
     public:
-        void turn_susan(int num_ticks);
+        Susan();
+        void turn_susan(double degrees);
         void go_home_susan();
+        void point_to_min_distance();
     private:
+        double current_position; //degrees
+        float get_sonar_distance();
 
 };
 
-#endif //SUSAN_H

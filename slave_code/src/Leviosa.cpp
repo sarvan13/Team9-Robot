@@ -1,4 +1,4 @@
-#include <Movement.h>
+#include <Leviosa.h>
 #include <Arduino.h>
 #include <Wire.h>
 #include <time.h>
@@ -12,9 +12,9 @@
 #define REVERSE_MOTOR_PIN PA_3 //maybe (could be reverse or forward)
 #define FORWARD_MOTOR_PIN PA_2 //maybe
 
-#define LIMIT_PIN PB_3
+#define LIMIT_PIN PA15
 
-#define QRD_PIN PA_5
+#define QRD_PIN PA5
 #define QRD_THRESHOLD 300
 
 #define DISTANCE_PER_REV 3 //mm (currently a fat guess)
@@ -41,10 +41,10 @@ Leviosa::Leviosa()
 
     //Set base state for QRD encoder
     if(analogRead(QRD_PIN) > QRD_THRESHOLD){
-        base_state = BLACK;
+        base_state = BLACKY;
     }
     else{
-        base_state=WHITE;
+        base_state=WHITEY;
     }
 }
 
@@ -76,20 +76,20 @@ void Leviosa::wingardium_leviosa(int position)
 
         while(current_position < position){
             if(analogRead(QRD_PIN) > QRD_THRESHOLD){
-                middle_state = BLACK;
+                middle_state = BLACKY;
             }
             else{
-                middle_state = WHITE;
+                middle_state = WHITEY;
             }
 
             delay(3); //delay short amount of time to get rid of noise lol
 
             //Read sensor again after some time to compare to previous value
             if(analogRead(QRD_PIN) > QRD_THRESHOLD){
-                current_state = BLACK;
+                current_state = BLACKY;
             }
             else{
-                current_state = WHITE;
+                current_state = WHITEY;
             }
 
             //Check if we have gone a full revolution
@@ -112,20 +112,20 @@ void Leviosa::wingardium_leviosa(int position)
 
         while(current_position > position){
             if(analogRead(QRD_PIN) > QRD_THRESHOLD){
-                middle_state = BLACK;
+                middle_state = BLACKY;
             }
             else{
-                middle_state = WHITE;
+                middle_state = WHITEY;
             }
 
             delay(3); //delay short amount of time to get rid of noise lol
 
             //Read sensor again after some time to compare to previous value
             if(analogRead(QRD_PIN) > QRD_THRESHOLD){
-                current_state = BLACK;
+                current_state = BLACKY;
             }
             else{
-                current_state = WHITE;
+                current_state = WHITEY;
             }
 
             //Check if we have gone a full revolution

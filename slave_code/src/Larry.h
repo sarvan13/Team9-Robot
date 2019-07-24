@@ -3,11 +3,13 @@
 class Larry
 {
     public:
-        void move_larry(int distance); //mm
+        Larry();
+        void move_larry(double distance); //mm
         void go_far_larry();
         void go_home_larry();
+        double current_position;
+        int state;
     private:
         int reg_speed;
 };
 
-#endif //Larry
