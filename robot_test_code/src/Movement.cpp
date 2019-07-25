@@ -19,7 +19,7 @@
 // #define LEFT_WHEEL_INTERRUPT PB_4
 // #define RIGHT_WHEEL_INTERRUPT PB_5
 
-#define REG_SPEED 100
+#define REG_SPEED 500
 #define TPWM 500
 #define CLOCKF 100000
 

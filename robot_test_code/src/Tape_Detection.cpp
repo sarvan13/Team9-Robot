@@ -7,27 +7,28 @@
 #include "PinNames.h"
 
 #define MULTIPLEX_OUT PA5
+#define LEFT_BACKWARDS_SENSOR PA4
 #define A PB14  // Left = 000 - Right = 
 #define B PB13
 #define C PB12
 
 #define TAPEFOLLOWTHRESH 480
-#define ALTERNATETAPEFOLLOWTHRESH 500
+#define BACKWARDFOLLOWTHRESH 800
 #define LEFT_THRESH 670
 #define RIGHT_THRESH 670
-#define MARKER_THRESH 800
+#define MARKER_THRESH 890
 
-#define HARDCODE_KP 40 //240
-#define HARDCODE_KD 0//50
+#define HARDCODE_KP 120 //240
+#define HARDCODE_KD 25//50
 #define COUNTER_VAL 0
 
 //1 0 1 main middle sensor
 //0 1 0 corner left sensor
 //1 1 1 main right sensor
 //0 0 0 marker left sensor
-//1 0 0 nothing
+//1 0 0 marker_right sensor
 //0 0 1 corner right sensor
-//1 1 0 marker right sensor
+//1 1 0 backwards right sensor
 //0 1 1 main left sensor
 Tape_Detection::Tape_Detection(){
     Kp = HARDCODE_KP;
@@ -36,6 +37,7 @@ Tape_Detection::Tape_Detection(){
     pinMode(A, OUTPUT);
     pinMode(B, OUTPUT);
     pinMode(C, OUTPUT);
+    pinMode(LEFT_BACKWARDS_SENSOR, INPUT_ANALOG);
 }
 
 branch_state Tape_Detection::branch_exists(){
@@ -75,7 +77,7 @@ marker_state Tape_Detection::marker_exists(){
 
 
   digitalWrite(A, HIGH);
-  digitalWrite(B, HIGH);
+  digitalWrite(B, LOW);
   digitalWrite(C, LOW);
   float marker_right_sensor = analogRead(MULTIPLEX_OUT);
   Serial.print(marker_right_sensor); Serial.print(" ");
@@ -110,31 +112,28 @@ int Tape_Detection::alternate_get_pid(){
 }
 
 int Tape_Detection::get_alternate_path_error(){
-  digitalWrite(A, LOW);
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
-  float marker_right_sensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(marker_right_sensor); Serial.print(" ");
-
-
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
   digitalWrite(C, LOW);
-  float marker_left_sensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(marker_left_sensor); Serial.print(" ");
+  float backwards_left_sensor = analogRead(MULTIPLEX_OUT);
+  Serial.print(backwards_left_sensor); Serial.print(" ");
+
+
+  float backwards_right_sensor = analogRead(LEFT_BACKWARDS_SENSOR);
+  Serial.print(backwards_right_sensor); Serial.print(" ");
   
 
 
   previous_path_error = path_error;
-   if(marker_left_sensor < ALTERNATETAPEFOLLOWTHRESH && marker_right_sensor < ALTERNATETAPEFOLLOWTHRESH){
+   if(backwards_right_sensor < BACKWARDFOLLOWTHRESH && backwards_left_sensor < BACKWARDFOLLOWTHRESH){
      if (previous_path_error < 0){
             path_error = -2;
         } else {
             path_error = 2;
         }
-   } else if(marker_left_sensor < ALTERNATETAPEFOLLOWTHRESH){
+   } else if(backwards_right_sensor < BACKWARDFOLLOWTHRESH){
      path_error = -1;
-   } else if(marker_right_sensor < ALTERNATETAPEFOLLOWTHRESH){
+   } else if(backwards_left_sensor < BACKWARDFOLLOWTHRESH){
      path_error = 1;
    } else {
       path_error = 0;

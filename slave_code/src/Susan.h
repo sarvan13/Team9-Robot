@@ -4,11 +4,11 @@ class Susan
 {
     public:
         Susan();
-        void turn_susan(double degrees);
+        void turn_susan(int step);
         void go_home_susan();
         void point_to_min_distance();
     private:
-        double current_position; //degrees
+        double current_position; //ticks
         float get_sonar_distance();
 
 };
