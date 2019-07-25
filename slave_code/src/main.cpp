@@ -15,7 +15,7 @@
 #define ENCODER_PIN PB12
 
 #define TICKS_PER_REV 24.0 
-#define DISTANCE_PER_REV 50.0 //mm (perhaps)
+#define DISTANCE_PER_REV 50.75 //mm (perhaps)
 
 #define FORWARD 1
 #define REVERSE -1
@@ -48,29 +48,17 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("fuck");
-  larry.move_larry(100);
-<<<<<<< HEAD
+  larry.move_larry(99);
   talons.open_claw();
-=======
-<<<<<<< HEAD
-  talons.open_claw();
-=======
   //open_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
   delay(1000);
   //larry.go_home_larry();
   larry.go_far_larry();
   delay(500);
-<<<<<<< HEAD
+
   talons.close_claw();
-=======
-<<<<<<< HEAD
-  talons.close_claw();
-=======
+
   //close_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
   delay(1000);
   
 }
@@ -83,10 +71,9 @@ void handle_encoder_interrupt(){
     larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
   }
 
-<<<<<<< HEAD
-  // Serial.println(larry.current_position);
-=======
-  //Serial.println(larry.current_position);
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
+  if (larry.current_position < 0){
+    larry.current_position = 0;
+  }
+  Serial.println(larry.current_position);
 }
 

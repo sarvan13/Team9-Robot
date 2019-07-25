@@ -72,7 +72,7 @@ void Larry::go_far_larry()
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
-    while(!digitalRead(CLAW_LIMIT_PIN) && !digitalRead(RACK_LIMIT_PIN)){
+    while(!digitalRead(CLAW_LIMIT_PIN) && (digitalRead(RACK_LIMIT_PIN) == LOW)){
 
     }
 
@@ -95,9 +95,10 @@ void Larry::move_larry(double position){
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
 
         while(current_position < position){
-            Serial.println(current_position);
-            Serial.println(position);
+            Serial.print("in loop");
         }
+
+        Serial.print("Out of loop");
 
         pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
