@@ -8,7 +8,7 @@ class Movement
         void turn_left();
         void turn_right();
         void u_turn();
-        void reverse();
+        void reverse(int left_speed, int right_speed);
         void forward();
         void apply_pid(int pid);
         void grab_plushie_left();
@@ -17,7 +17,8 @@ class Movement
         void stop();
         void set_speed(int speed);
         void rotate_forward();
-        void rotate_backward();
+        void rotate_backward(int speed);
+        void alternate_pid(int pid);
     
     private:
         int reg_speed;

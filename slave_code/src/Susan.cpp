@@ -24,6 +24,7 @@
 #define ECHO_PIN PB10
 
 #define SWEEP_ANGLE 30
+#define GEAR_RATIO 3.44
 
 A4988 stepper(MOTOR_STEPS, DIR, STEP);
 
@@ -45,31 +46,21 @@ Susan::Susan(){
 
 void Susan::go_home_susan(){
     while(digitalRead(LIMIT_PIN) == LOW){
-        stepper.rotate(0.5); //rotate the stepper by half a degree until we reach home
+        stepper.move(1); //rotate the stepper by one tick until we reach home
     }
 }
 
 /* Paramters: absolute value in degrees that we want to turn to relative to
-/* home position. Between 0 and 360 degrees
- */
-void Susan::turn_susan(double degrees){
-    //Calculate angle needed to rotate in either direction from current postition
-    double to_rotate_pos = abs(degrees - current_position);
-    double to_rotate_neg = abs(current_position + 360 - degrees);
-
-    if (to_rotate_neg > to_rotate_pos){
-        //Turn stepper oppposite direction
-        digitalWrite(DIR, LOW);
-        //Rotate by necessary amount
-        stepper.rotate(to_rotate_neg);
-        //Set back to default
-        digitalWrite(DIR, HIGH);
-    }
-    else{
-        stepper.rotate(to_rotate_pos);
-    }
+/* home position. Between -180 and 180 degrees
+ */ //gear ratio 124:36
+void Susan::turn_susan(int degrees){
+    //Calculate angle needed to rotate in either direction from current 
+    
+    double to_rotate = (degrees - current_position) * GEAR_RATIO * MOTOR_STEPS / 360;
+    stepper.move(to_rotate);
 
     current_position = degrees;
+    Serial.println(current_position);
 
 }
 

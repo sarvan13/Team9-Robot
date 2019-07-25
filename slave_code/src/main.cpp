@@ -21,17 +21,19 @@
 #define REVERSE -1
 
 // put your setup code here, to run once:
-Larry larry;
-Talons talons;
-// Leviosa leviosa;
+// Larry larry;
+// Talons talons;
+Leviosa leviosa;
 // Susan susan;
 
 void handle_encoder_interrupt();
-void pick_up_stone();
 
+<<<<<<< HEAD
 void pick_up_stone(){
+=======
 
-}
+>>>>>>> b776de67f1219d55ba9c987cdb249405e9758ef8
+
 
 void setup() {
 
@@ -46,6 +48,30 @@ void setup() {
 
 
 void loop() {
+<<<<<<< HEAD
+
+  // // put your main code here, to run repeatedly:
+  // //Serial.println("fuck");
+  // larry.move_larry(100);
+  // talons.open_claw();
+
+  // //open_claw();
+
+  // delay(1000);
+  // //larry.go_home_larry();
+  // larry.go_far_larry();
+  // delay(500);
+
+  // talons.close_claw();
+
+
+
+  // //close_claw();
+
+  // delay(1000);
+
+  leviosa.wingardium_leviosa(1000);
+=======
   // put your main code here, to run repeatedly:
   //Serial.println("fuck");
   larry.move_larry(90);
@@ -56,6 +82,7 @@ void loop() {
   delay(1000);
   talons.close_claw();
   delay(1000);
+<<<<<<< HEAD
 }
 
 void handle_encoder_interrupt(){
@@ -69,6 +96,25 @@ void handle_encoder_interrupt(){
   if(larry.current_position < 0) {
     larry.current_position = 0;
   } 
+=======
+>>>>>>> 425447b9514828bf693a7c4ef3232fd79e6b6ad1
+  
+}
+
+void handle_encoder_interrupt(){
+  // if (larry.state == FORWARD){
+  //   larry.current_position -= DISTANCE_PER_REV / TICKS_PER_REV;
+  // }
+  // else if (larry.state == REVERSE){
+  //   larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
+  // }
+
+
+  // Serial.println(larry.current_position);
+
+  //Serial.println(larry.current_position);
+
+>>>>>>> b776de67f1219d55ba9c987cdb249405e9758ef8
 }
 
 

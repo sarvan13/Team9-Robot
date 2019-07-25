@@ -20,23 +20,33 @@ void Communication::master_request(){
   delay(500);
   Wire.requestFrom(BPILL_ADDRESS,1,1);
   delay(500);
-  while(Wire.available()){
-    byte a = Wire.read();
-    Serial.println(a);
+  byte a = NOT_DONE;
+  while(a == NOT_DONE){
+    while(Wire.available()){
+      a = Wire.read();
+      Serial.println(a);
+    }
+    delay(5000);
   }
-  delay(5000);
 }
 
-void Communication::master_transmit_stone(){
+void Communication::master_transmit_stone_left(){
   Wire.beginTransmission(BPILL_ADDRESS);                           
-  Wire.write(12);                        
+  Wire.write(LEFT_POLE_PICKUP);                        
+  Wire.endTransmission(); 
+  delay(7000);
+}
+
+void Communication::master_transmit_stone_right(){
+  Wire.beginTransmission(BPILL_ADDRESS);                           
+  Wire.write(RIGHT_POLE_PICKUP);                        
   Wire.endTransmission(); 
   delay(7000);
 }
 
 void Communication::master_transmit_gauntlet(){
   Wire.beginTransmission(BPILL_ADDRESS);                           
-  Wire.write(12);                        
+  Wire.write(GAUNTLET_PICKUP);                        
   Wire.endTransmission(); 
   delay(7000);
 }
