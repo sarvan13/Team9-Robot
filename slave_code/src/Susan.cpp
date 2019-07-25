@@ -29,6 +29,7 @@ A4988 stepper(MOTOR_STEPS, DIR, STEP);
 
 Susan::Susan(){
     //Set Default to turn counterclockwise
+    
     digitalWrite(DIR, HIGH);
     //Initialize stepper motor
     stepper.begin(RPM, MICROSTEPPING);
