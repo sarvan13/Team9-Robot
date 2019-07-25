@@ -12,14 +12,14 @@
 // #define C PB_4
 #define LEFT_REVERSE_PIN PB_1 //ORANGE WIRE
 #define LEFT_FORWARD_PIN PB_0 //YELLOW WIRE
-#define RIGHT_FORWARD_PIN PA_6 // red, 
-#define RIGHT_REVERSE_PIN PA_7 //brown
+#define RIGHT_REVERSE_PIN PA_6 // red, 
+#define RIGHT_FORWARD_PIN PA_7 //brown
 #define GROUND PB10
 
 // #define LEFT_WHEEL_INTERRUPT PB_4
 // #define RIGHT_WHEEL_INTERRUPT PB_5
 
-#define REG_SPEED 500
+#define REG_SPEED 100
 #define TPWM 500
 #define CLOCKF 100000
 
@@ -76,6 +76,22 @@ void Movement::apply_pid(int pid){
    
 }
 
+void Movement::alternate_pid(int pid){
+    int left_motor_speed = reg_speed + pid;
+    int right_motor_speed = reg_speed - pid;
+    // Serial.print(left_motor_speed);
+    // Serial.print(" ");
+    // Serial.print(right_motor_speed);
+    // Serial.print(" ");
+    left_motor_speed = constrain(left_motor_speed, 0, TPWM);
+    right_motor_speed = constrain(right_motor_speed, 0, TPWM);
+
+    pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, left_motor_speed, 0);
+    pwm_start(RIGHT_REVERSE_PIN, CLOCKF, TPWM, right_motor_speed, 0);
+}
+
 void Movement::turn_right()
 {
     int left_motor_speed = 500;
@@ -105,15 +121,10 @@ void Movement::forward(){
 
 }
 
-void Movement::u_turn()
+void Movement::reverse(int left_speed, int right_speed)
 {
-
-}
-
-void Movement::reverse()
-{
-    int left_motor_speed = reg_speed;
-    int right_motor_speed = reg_speed;
+    int left_motor_speed = left_speed;
+    int right_motor_speed = right_speed;
     pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
     pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
     pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, left_motor_speed, 0);
@@ -148,14 +159,19 @@ void Movement::set_speed(int speed){
 
 void Movement::rotate_forward(){
 
-    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 50, 0);
-    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, 50, 0);
+     pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 125, 0);
+    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, 125, 0);
+    pwm_start(RIGHT_REVERSE_PIN, CLOCKF, TPWM, 0, 0);
+
 
 }
 
-void Movement::rotate_backward(){
-    pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 50, 0);
-    pwm_start(RIGHT_REVERSE_PIN, CLOCKF, TPWM, 50, 0);
+void Movement::rotate_backward(int speed){
+     pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, speed, 0);
+    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(RIGHT_REVERSE_PIN, CLOCKF, TPWM, speed, 0);
 }
 
 void handle_left_wheel_interrupt(){
