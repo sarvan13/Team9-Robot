@@ -49,20 +49,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("fuck");
   larry.move_larry(100);
-<<<<<<< HEAD
   talons.open_claw();
-=======
-  //open_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
   delay(1000);
   //larry.go_home_larry();
   larry.go_far_larry();
   delay(500);
-<<<<<<< HEAD
   talons.close_claw();
-=======
-  //close_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
   delay(1000);
   
 }
