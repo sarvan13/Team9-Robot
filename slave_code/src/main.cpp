@@ -20,30 +20,48 @@
 #define FORWARD 1
 #define REVERSE -1
 
+#define GAUNTLET 'G
+#define LEFT_POST 'L'
+#define RIGHT_POST 'R'
 
 // put your setup code here, to run once:
-// Larry larry;
-// Talons talons;
+Larry larry;
+Talons talons;
 Leviosa leviosa;
-// Susan susan;
+Susan susan;
 
-void handle_encoder_interrupt();
-
-
+// void handle_encoder_interrupt();
 
 
 void setup() {
 
   Serial.begin(115200);
-  pinMode(ENCODER_PIN, INPUT);
+  // pinMode(ENCODER_PIN, INPUT);
 
-  attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
+  
+
+  // attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
   Serial.println("fuck");
   
 }
 
+
 void loop() {
 
+  susan.turn_susan(172);
+  // delay(1000);
+  delay(200);
+  susan.turn_susan(0);
+  delay(200);
+  // delay(1000);
+
+  // susan.turn_susan(162);
+
+  // delay(3000);
+
+  // susan.turn_susan(0);
+
+  // delay(3000);
 
   // // put your main code here, to run repeatedly:
   // //Serial.println("fuck");
@@ -72,17 +90,28 @@ void loop() {
 }
 
 void handle_encoder_interrupt(){
-  // if (larry.state == FORWARD){
-  //   larry.current_position -= DISTANCE_PER_REV / TICKS_PER_REV;
-  // }
-  // else if (larry.state == REVERSE){
-  //   larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
-  // }
-
-
+  if (larry.state == FORWARD){
+    larry.current_position -= DISTANCE_PER_REV / TICKS_PER_REV;
+  }
+  else if (larry.state == REVERSE){
+    larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
+  }
   // Serial.println(larry.current_position);
+  if(larry.current_position < 0) {
+    larry.current_position = 0;
+  } 
+  
+}
 
-  //Serial.println(larry.current_position);
+char wait_for_master() {
+  char message = 0;
+  while (true) {
+    if (Serial.available() > 0) {
+      message = Serial.read();
+      if (message == LEFT_POST)
 
+        return message;
+    }
+  }
 }
 

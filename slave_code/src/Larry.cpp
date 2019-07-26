@@ -82,6 +82,9 @@ void Larry::go_far_larry()
     if (digitalRead(RACK_LIMIT_PIN) == HIGH){
         current_position = 0;
     }
+    while(digitalRead(CLAW_LIMIT_PIN)){
+        //do nothing
+    }
 }
 
 void Larry::move_larry(double position){
