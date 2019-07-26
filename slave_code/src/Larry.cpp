@@ -13,7 +13,7 @@
 #define FORWARD_MOTOR_PIN PA_0 //maybe
 
 #define RACK_LIMIT_PIN PB4
-#define CLAW_LIMIT_PIN PB13
+
 
 // #define ENCODER_PIN PB12
 
@@ -72,7 +72,7 @@ larry_success Larry::go_far_larry()
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
-    while(!digitalRead(CLAW_LIMIT_PIN) && !digitalRead(RACK_LIMIT_PIN)){
+    while(!digitalRead(CLAW_LIMIT_PIN) && (digitalRead(RACK_LIMIT_PIN) == LOW)){
 
     }
 
@@ -82,8 +82,12 @@ larry_success Larry::go_far_larry()
     if (digitalRead(RACK_LIMIT_PIN) == HIGH){
         current_position = 0;
     }
-    while(digitalRead(CLAW_LIMIT_PIN)){
-        //do nothing
+
+    if (digitalRead(CLAW_LIMIT_PIN)){
+        return PASS;
+    }
+    else {
+        return FAIL;
     }
 }
 
@@ -98,9 +102,10 @@ void Larry::move_larry(double position){
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
 
         while(current_position < position){
-            Serial.println(current_position);
-            Serial.println(position);
+            Serial.print("in loop");
         }
+
+        Serial.print("Out of loop");
 
         pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);

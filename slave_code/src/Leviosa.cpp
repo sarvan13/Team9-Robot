@@ -139,3 +139,7 @@ int Leviosa::check_leviosa(qrd_state current_state){
         return 0;
     }
 }
+
+int Leviosa::get_current_position(){
+    return current_position;
+}

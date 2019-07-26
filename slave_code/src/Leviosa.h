@@ -12,6 +12,7 @@ class Leviosa
         void wingardium_leviosa(int position); //mm
         void go_home_hermione();
         void read_leviosa();
+        int get_current_position();
     private:
         int reg_speed;
         int current_position;

@@ -13,9 +13,8 @@
 #include "PinNames.h"
 
 #define ENCODER_PIN PB12
-
 #define TICKS_PER_REV 24.0 
-#define DISTANCE_PER_REV 50.0 //mm (perhaps)
+#define DISTANCE_PER_REV 50.75 //mm (perhaps)
 
 #define FORWARD 1
 #define REVERSE -1
@@ -23,6 +22,13 @@
 #define GAUNTLET 'G'
 #define LEFT_POST 'L'
 #define RIGHT_POST 'R'
+
+char wait_for_master();
+void pick_up_stone_left();
+void pick_up_stone_right();
+void gauntlet_disposal();
+
+int current_position;
 
 // put your setup code here, to run once:
 Larry larry;
@@ -42,14 +48,12 @@ void setup() {
 
   // attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
   Serial.println("fuck");
+  susan.point_to_min_distance();
   
 }
 
 
 void loop() {
-
-  
-
   char message = wait_for_master();
   switch(message){
     case LEFT_POST:
@@ -92,40 +96,47 @@ char wait_for_master() {
 void pick_up_stone_left(){
     susan.turn_susan(-172);
     leviosa.go_home_hermione();
-    susan.point_to_min_distance();
+    float distance = susan.point_to_min_distance();
     if(larry.go_far_larry() == FAIL){
 
       if(larry.go_far_larry() == FAIL)
         return;
     }
-    //while switch is high, wingardium leviosa(1)
-    //close claws of talon 
-    // wingardium leviosa (leviosa.current_position + 30)
-    //larry move backwards
-    //susan turn susan (-344)
-    //wingardium leviosa (100)
-    
-
-
-
-  
-
+    current_position = leviosa.get_current_position();
+    while(!digitalRead(CLAW_LIMIT_PIN)){
+      current_position++;
+      leviosa.wingardium_leviosa(current_position);
+    }
+    talons.close_claw();
+    leviosa.wingardium_leviosa(current_position + 30);
+    larry.move_larry(larry.current_position + 20);
+    susan.turn_susan(-344);
+    //lower by certain amount 
     
 }
 
 void pick_up_stone_right(){
     susan.turn_susan(172);
-    leviosa.wingardium_leviosa(30);
-    larry.go_far_larry();
-    //while switch is high, wingardium leviosa(1)
-    //close claws of talon 
-    // wingardium leviosa (leviosa.current_position + 30)
-    //larry move backwards
-    //susan turn susan (-344)
-    //wingardium leviosa (100)
+   leviosa.go_home_hermione();
+    float distance = susan.point_to_min_distance();
+    if(larry.go_far_larry() == FAIL){
+
+      if(larry.go_far_larry() == FAIL)
+        return;
+    }
+    current_position = leviosa.get_current_position();
+    while(!digitalRead(CLAW_LIMIT_PIN)){
+      current_position++;
+      leviosa.wingardium_leviosa(current_position);
+    }
+    talons.close_claw();
+    leviosa.wingardium_leviosa(current_position + 30);
+    larry.move_larry(larry.current_position + 20);
+    susan.turn_susan(344);
 }
 
 void gauntlet_disposal(){
 
 }
+
 
