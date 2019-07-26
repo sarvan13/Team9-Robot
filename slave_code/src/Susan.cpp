@@ -26,6 +26,9 @@
 #define SWEEP_STEPS 60
 #define GEAR_RATIO 124/36
 
+#define CLOCKWISE 1
+#define COUNTERCLOCKWISE 0
+
 #define STEPS_PER_REV MOTOR_STEPS*GEAR_RATIO
 
 A4988 stepper(MOTOR_STEPS, DIR, STEP);
@@ -75,6 +78,22 @@ void Susan::turn_susan(int steps){
     current_position = steps;
 }
 
+void Susan::send_step(){
+    digitalWrite(STEP, HIGH);
+    delay(10);
+    digitalWrite(STEP, LOW);
+    delay(10);
+    current_position += digitalRead(DIR) ? 1 : -1;
+}
+
+void Susan::set_dir(int dir){
+    if(dir){
+        digitalWrite(DIR, CLOCKWISE);
+    } else{
+        digitalWrite(DIR, COUNTERCLOCKWISE);
+    }
+}
+
 void Susan::point_to_min_distance(){
     int steps_from_start = 0;
     int best_num_steps_from_start = 0;
@@ -82,10 +101,10 @@ void Susan::point_to_min_distance(){
     float min_distance = distance;
     int clock_flag = -1; //To know which direction to turn 
     int final_position;
-
+    set_dir(COUNTERCLOCKWISE);
     //Sweep from center in counterclockwise direction
     while (steps_from_start < SWEEP_STEPS){
-        stepper.move(1);
+        send_step();
         steps_from_start += 1;
         distance = get_sonar_distance();
         if (distance < min_distance){
@@ -95,10 +114,14 @@ void Susan::point_to_min_distance(){
     }
 
     //Sweep from most clockwise point to center
-    stepper.move(-2*SWEEP_STEPS);
+    set_dir(CLOCKWISE);
+    for(int i = 0; i < 2 * SWEEP_STEPS; i++){
+        send_step();
+    }
     
+    set_dir(COUNTERCLOCKWISE);
     while (steps_from_start > 0){
-        stepper.move(1);
+        send_step();
         steps_from_start -= 1;
         distance = get_sonar_distance();
         if (distance < min_distance){
@@ -110,9 +133,9 @@ void Susan::point_to_min_distance(){
 
     //Rotate to final position
     //Check where min is relative to the start position (current position)
-    if (clock_flag == 1){
+    if (clock_flag == -1){
         final_position = current_position - best_num_steps_from_start;
-
+        
         turn_susan(final_position);
     }
     else{
@@ -122,7 +145,7 @@ void Susan::point_to_min_distance(){
     }  
 }
 
-float get_sonar_distance(){
+float Susan::get_sonar_distance(){
     long duration;
     float distance;
     // Clears the TRIGGER_PIN
@@ -136,6 +159,6 @@ float get_sonar_distance(){
     duration = pulseIn(ECHO_PIN, HIGH);
     // Calculating the distance
     distance= duration*0.034/2;
-
+    Serial.println(distance);
     return distance;
 }
