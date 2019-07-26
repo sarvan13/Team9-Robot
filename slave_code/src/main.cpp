@@ -43,7 +43,7 @@ void setup() {
 }
 
 void loop() {
-<<<<<<< HEAD
+
 
   // // put your main code here, to run repeatedly:
   // //Serial.println("fuck");
@@ -65,39 +65,9 @@ void loop() {
 
   // delay(1000);
 
-  leviosa.wingardium_leviosa(1000);
-=======
-  // put your main code here, to run repeatedly:
-  //Serial.println("fuck");
-  larry.move_larry(100);
-  talons.open_claw();
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-  talons.open_claw();
-=======
-  //open_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
->>>>>>> 29bd93ea5f784cf090581d694ba8deccbe8392f8
-  delay(1000);
-  //larry.go_home_larry();
-  larry.go_far_larry();
-  delay(500);
-  talons.close_claw();
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-  talons.close_claw();
-=======
-  //close_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
->>>>>>> 29bd93ea5f784cf090581d694ba8deccbe8392f8
-  delay(1000);
->>>>>>> 425447b9514828bf693a7c4ef3232fd79e6b6ad1
+  leviosa.wingardium_leviosa(870);
+  // leviosa.read_leviosa();
+
   
 }
 
