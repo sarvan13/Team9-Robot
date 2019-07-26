@@ -13,13 +13,15 @@
 #include "PinNames.h"
 
 #define ENCODER_PIN PB12
-
 #define TICKS_PER_REV 24.0 
 #define DISTANCE_PER_REV 50.75 //mm (perhaps)
 
 #define FORWARD 1
 #define REVERSE -1
 
+#define GAUNTLET 'G
+#define LEFT_POST 'L'
+#define RIGHT_POST 'R'
 
 // put your setup code here, to run once:
 Larry larry;
@@ -48,46 +50,16 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //Serial.println("fuck");
-<<<<<<< HEAD
   larry.move_larry(99);
+  //open_claw();
   talons.open_claw();
   //open_claw();
-=======
-  larry.move_larry(100);
-  talons.open_claw();
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
-  talons.open_claw();
-=======
-  //open_claw();
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
->>>>>>> 29bd93ea5f784cf090581d694ba8deccbe8392f8
->>>>>>> 425447b9514828bf693a7c4ef3232fd79e6b6ad1
-  delay(1000);
   //larry.go_home_larry();
   larry.go_far_larry();
   delay(500);
-<<<<<<< HEAD
-
-=======
-  talons.close_claw();
-<<<<<<< HEAD
-=======
-=======
-<<<<<<< HEAD
->>>>>>> 425447b9514828bf693a7c4ef3232fd79e6b6ad1
   talons.close_claw();
 
   //close_claw();
-<<<<<<< HEAD
-=======
->>>>>>> 052726638c4e414d1bcad1889f4403f1898576fe
->>>>>>> 46be8a23352421d048885a65526c400ac2569257
->>>>>>> 29bd93ea5f784cf090581d694ba8deccbe8392f8
->>>>>>> 425447b9514828bf693a7c4ef3232fd79e6b6ad1
   delay(1000);
   
 }
@@ -106,3 +78,13 @@ void handle_encoder_interrupt(){
   Serial.println(larry.current_position);
 }
 
+char wait_for_master() {
+  char message = 0;
+  while (true) {
+    if (Serial.available() > 0) {
+      message = Serial.read();
+      if (message == LEFT_POST)
+        return message;
+    }
+  }
+}
