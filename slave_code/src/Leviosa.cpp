@@ -20,7 +20,7 @@
 
 #define DISTANCE_PER_REV 3 //mm (currently a fat guess)
 
-#define REG_SPEED 200
+#define REG_SPEED 400
 #define TPWM 500
 #define CLOCKF 100000
 
@@ -42,10 +42,10 @@ Leviosa::Leviosa()
 
     //Set base state for QRD encoder
     if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
-        base_state = BLACKY;
+       current_state = BLACKY;
     }
     else{
-        base_state=WHITEY;
+        current_state=WHITEY;
     }
 }
 
@@ -92,29 +92,7 @@ void Leviosa::wingardium_leviosa(int position)
                     counter++;
                 }
             }
-            // if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
-            //     current_state = BLACKY;
-            // }
-            // else{
-            //     current_state = WHITEY;
-            // }
-
-
-            // delay(3); //delay short amount of time to get rid of noise lol
-
-            // //Read sensor again after some time to compare to previous value
-            // if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
-            //     current_state = BLACKY;
-            // }
-            // else{
-            //     current_state = WHITEY;
-            // }
             current_position += DISTANCE_PER_REV;
-            
-            //Check if we have gone a full revolution
-            // if(middle_state != base_state && current_state == base_state){
-            //     current_position += DISTANCE_PER_REV;
-            // }
            
         }
         //Turn off motors once we reach desired position
@@ -138,28 +116,6 @@ void Leviosa::wingardium_leviosa(int position)
                 }
             }
              current_position -= DISTANCE_PER_REV;
-            // if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
-            //     middle_state = BLACKY;
-            // }
-            // else{
-            //     middle_state = WHITEY;
-            // }
-
-            // delay(3); //delay short amount of time to get rid of noise lol
-
-            // //Read sensor again after some time to compare to previous value
-            // if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
-            //     current_state = BLACKY;
-            // }
-            // else{
-            //     current_state = WHITEY;
-            // }
-
-            // //Check if we have gone a full revolution
-            // if(middle_state != base_state && current_state == base_state){
-            //     //Decrement current position
-            //     current_position -= DISTANCE_PER_REV;
-            // }
         
         }
         //Turn off motors once we reach desired position

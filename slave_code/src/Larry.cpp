@@ -66,7 +66,7 @@ void Larry::go_home_larry()
     Serial.print(current_position);
 }
 
-void Larry::go_far_larry()
+larry_success Larry::go_far_larry()
 {
     state = FORWARD;
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);

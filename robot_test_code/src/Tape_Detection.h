@@ -1,7 +1,6 @@
 #ifndef TAPE_DETECTION_H
 #define TAPE_DETECTION_H
 
-#include <PID.h>
 
 
 enum branch_state
