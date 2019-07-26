@@ -18,7 +18,7 @@
 #define HIGH_QRD_THRESHOLD 800
 #define LOW_QRD_THRESHOLD 100
 
-#define DISTANCE_PER_REV 3 //mm (currently a fat guess)
+//#define DISTANCE_PER_REV 3 //mm (currently a fat guess)
 
 #define REG_SPEED 400
 #define TPWM 500
@@ -48,11 +48,14 @@ Leviosa::Leviosa()
         current_state=WHITEY;
     }
 }
-
+/*Prints the QRD value, for testing the qrd by hand
+ */
 void Leviosa::read_leviosa(){
     Serial.println(analogRead(QRD_PIN));
 }
 
+/* Turns the lead screw until the limit switch is touched by the arm
+ */
 void Leviosa::go_home_hermione()
 {
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
@@ -66,13 +69,13 @@ void Leviosa::go_home_hermione()
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 }
 
-//Moves arm to a position above the base position
+/* Moves the arm vertically by a specified number of revolutions 
+   (position muct be given in number of revolutions)
+ */
 void Leviosa::wingardium_leviosa(int position)
 {
-    // enum qrd_state middle_state;
     int counter;
    
-
     if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
          current_state = BLACKY;
     }else if(analogRead(QRD_PIN) < LOW_QRD_THRESHOLD){
@@ -92,7 +95,7 @@ void Leviosa::wingardium_leviosa(int position)
                     counter++;
                 }
             }
-            current_position += DISTANCE_PER_REV;
+            current_position += 1;
            
         }
         //Turn off motors once we reach desired position
@@ -115,7 +118,7 @@ void Leviosa::wingardium_leviosa(int position)
                     counter++;
                 }
             }
-             current_position -= DISTANCE_PER_REV;
+             current_position -= 1;
         
         }
         //Turn off motors once we reach desired position
@@ -125,6 +128,10 @@ void Leviosa::wingardium_leviosa(int position)
     
 }
 
+
+/* Compares the current QRD reading to the previous reading and returns 
+/* 1 if they are different and 0 if the states are the same.
+ */
 int Leviosa::check_leviosa(qrd_state current_state){
     qrd_state state;
     if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
