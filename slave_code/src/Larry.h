@@ -1,11 +1,16 @@
 #define LARRY_H
 
+enum larry_success
+{
+    SUCCESS,
+    FAIL
+};
 class Larry
 {
     public:
         Larry();
         void move_larry(double distance); //mm
-        void go_far_larry();
+        larry_success go_far_larry();
         void go_home_larry();
         double current_position;
         int state;
