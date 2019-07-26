@@ -14,8 +14,7 @@ class Leviosa
         void read_leviosa();
     private:
         int reg_speed;
-        double current_position;
-        enum qrd_state base_state;
+        int current_position;
         enum qrd_state current_state = WHITEY;
         int check_leviosa(qrd_state current_state);
 };
