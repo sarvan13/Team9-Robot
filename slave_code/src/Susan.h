@@ -10,6 +10,7 @@ class Susan
     private:
         double current_position; //ticks
         float get_sonar_distance();
-
+        void send_step();
+        void set_dir(int dir);
 };
 

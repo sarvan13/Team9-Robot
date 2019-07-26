@@ -37,26 +37,13 @@ void setup() {
 
   // attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
   Serial.println("fuck");
+  susan.point_to_min_distance();
   
 }
 
 
 void loop() {
 
-  susan.turn_susan(172);
-  // delay(1000);
-  delay(200);
-  susan.turn_susan(0);
-  delay(200);
-  // delay(1000);
-
-  // susan.turn_susan(162);
-
-  // delay(3000);
-
-  // susan.turn_susan(0);
-
-  // delay(3000);
 
   // // put your main code here, to run repeatedly:
   // //Serial.println("fuck");
