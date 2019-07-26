@@ -94,7 +94,7 @@ void Susan::set_dir(int dir){
     }
 }
 
-void Susan::point_to_min_distance(){
+float Susan::point_to_min_distance(){
     int steps_from_start = 0;
     int best_num_steps_from_start = 0;
     float distance = get_sonar_distance();
@@ -143,6 +143,8 @@ void Susan::point_to_min_distance(){
 
         turn_susan(final_position);
     }  
+
+    return min_distance; 
 }
 
 float Susan::get_sonar_distance(){

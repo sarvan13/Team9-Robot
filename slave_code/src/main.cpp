@@ -19,13 +19,14 @@
 #define FORWARD 1
 #define REVERSE -1
 
-<<<<<<< HEAD
-#define GAUNTLET 'G
-=======
 #define GAUNTLET 'G'
->>>>>>> dfbea0e0d088c7522824b7cf2431a8f36c7283c7
 #define LEFT_POST 'L'
 #define RIGHT_POST 'R'
+
+char wait_for_master();
+void pick_up_stone_left();
+void pick_up_stone_right();
+void gauntlet_disposal();
 
 // put your setup code here, to run once:
 Larry larry;
@@ -51,26 +52,6 @@ void setup() {
 
 
 void loop() {
-<<<<<<< HEAD
-  // put your main code here, to run repeatedly:
-  //Serial.println("fuck");
-  larry.move_larry(99);
-  //open_claw();
-  talons.open_claw();
-  //open_claw();
-  //larry.go_home_larry();
-  larry.go_far_larry();
-  delay(500);
-  talons.close_claw();
-
-  //close_claw();
-  delay(1000);
-=======
-
-<<<<<<< HEAD
-=======
-  
-
   char message = wait_for_master();
   switch(message){
     case LEFT_POST:
@@ -81,46 +62,6 @@ void loop() {
       gauntlet_disposal();
   }
   Serial.write('D');
-  susan.turn_susan(172);
-  // delay(1000);
-  delay(200);
-  susan.turn_susan(0);
-  delay(200);
-  // delay(1000);
-
-  // susan.turn_susan(162);
-
-  // delay(3000);
-
-  // susan.turn_susan(0);
-
-  // delay(3000);
->>>>>>> dfbea0e0d088c7522824b7cf2431a8f36c7283c7
-
-  // // put your main code here, to run repeatedly:
-  // //Serial.println("fuck");
-  // larry.move_larry(100);
-  // talons.open_claw();
-
-  // //open_claw();
-
-  // delay(1000);
-  // //larry.go_home_larry();
-  // larry.go_far_larry();
-  // delay(500);
-
-  // talons.close_claw();
-
-
-
-  // //close_claw();
-
-  // delay(1000);
-
-  leviosa.wingardium_leviosa(870);
-  // leviosa.read_leviosa();
-
->>>>>>> dfbea0e0d088c7522824b7cf2431a8f36c7283c7
   
 }
 
@@ -131,13 +72,6 @@ void handle_encoder_interrupt(){
   else if (larry.state == REVERSE){
     larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
   }
-<<<<<<< HEAD
-
-  if (larry.current_position < 0){
-    larry.current_position = 0;
-  }
-  Serial.println(larry.current_position);
-=======
   // Serial.println(larry.current_position);
   if(larry.current_position < 0) {
     larry.current_position = 0;
@@ -173,16 +107,6 @@ void pick_up_stone_right(){
 
 void gauntlet_disposal(){
 
->>>>>>> dfbea0e0d088c7522824b7cf2431a8f36c7283c7
 }
 
-char wait_for_master() {
-  char message = 0;
-  while (true) {
-    if (Serial.available() > 0) {
-      message = Serial.read();
-      if (message == LEFT_POST)
-        return message;
-    }
-  }
-}
+

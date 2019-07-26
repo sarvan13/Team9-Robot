@@ -1,8 +1,9 @@
 #define LARRY_H
+#define CLAW_LIMIT_PIN PB13
 
 enum larry_success
 {
-    SUCCESS,
+    PASS,
     FAIL
 };
 class Larry

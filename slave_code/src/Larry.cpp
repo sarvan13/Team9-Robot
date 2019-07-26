@@ -13,7 +13,7 @@
 #define FORWARD_MOTOR_PIN PA_0 //maybe
 
 #define RACK_LIMIT_PIN PB4
-#define CLAW_LIMIT_PIN PB13
+
 
 // #define ENCODER_PIN PB12
 
@@ -82,8 +82,12 @@ larry_success Larry::go_far_larry()
     if (digitalRead(RACK_LIMIT_PIN) == HIGH){
         current_position = 0;
     }
-    while(digitalRead(CLAW_LIMIT_PIN)){
-        //do nothing
+
+    if (digitalRead(CLAW_LIMIT_PIN)){
+        return PASS;
+    }
+    else {
+        return FAIL;
     }
 }
 
