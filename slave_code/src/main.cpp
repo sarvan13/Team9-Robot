@@ -28,6 +28,8 @@ void pick_up_stone_left();
 void pick_up_stone_right();
 void gauntlet_disposal();
 
+int current_position;
+
 // put your setup code here, to run once:
 Larry larry;
 Talons talons;
@@ -61,8 +63,8 @@ void loop() {
     case GAUNTLET:
       gauntlet_disposal();
   }
+
   Serial.write('D');
-  
 }
 
 void handle_encoder_interrupt(){
@@ -93,16 +95,44 @@ char wait_for_master() {
 
 void pick_up_stone_left(){
     susan.turn_susan(-172);
-    leviosa.wingardium_leviosa(30);
-    susan.point_to_min_distance();
-    larry.go_far_larry();
+    leviosa.go_home_hermione();
+    float distance = susan.point_to_min_distance();
+    if(larry.go_far_larry() == FAIL){
+
+      if(larry.go_far_larry() == FAIL)
+        return;
+    }
+    current_position = leviosa.get_current_position();
+    while(!digitalRead(CLAW_LIMIT_PIN)){
+      current_position++;
+      leviosa.wingardium_leviosa(current_position);
+    }
+    talons.close_claw();
+    leviosa.wingardium_leviosa(current_position + 30);
+    larry.move_larry(larry.current_position + 20);
+    susan.turn_susan(-344);
+    //lower by certain amount 
     
 }
 
 void pick_up_stone_right(){
     susan.turn_susan(172);
-    leviosa.wingardium_leviosa(30);
-    larry.go_far_larry();
+   leviosa.go_home_hermione();
+    float distance = susan.point_to_min_distance();
+    if(larry.go_far_larry() == FAIL){
+
+      if(larry.go_far_larry() == FAIL)
+        return;
+    }
+    current_position = leviosa.get_current_position();
+    while(!digitalRead(CLAW_LIMIT_PIN)){
+      current_position++;
+      leviosa.wingardium_leviosa(current_position);
+    }
+    talons.close_claw();
+    leviosa.wingardium_leviosa(current_position + 30);
+    larry.move_larry(larry.current_position + 20);
+    susan.turn_susan(344);
 }
 
 void gauntlet_disposal(){
