@@ -2,7 +2,7 @@
 
 enum larry_success
 {
-    SUCCESS,
+    PASS,
     FAIL
 };
 class Larry

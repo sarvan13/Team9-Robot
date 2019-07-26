@@ -59,46 +59,8 @@ void loop() {
     case GAUNTLET:
       gauntlet_disposal();
   }
+
   Serial.write('D');
-  susan.turn_susan(172);
-  // delay(1000);
-  delay(200);
-  susan.turn_susan(0);
-  delay(200);
-  // delay(1000);
-
-  // susan.turn_susan(162);
-
-  // delay(3000);
-
-  // susan.turn_susan(0);
-
-  // delay(3000);
-
-  // // put your main code here, to run repeatedly:
-  // //Serial.println("fuck");
-  // larry.move_larry(100);
-  // talons.open_claw();
-
-  // //open_claw();
-
-  // delay(1000);
-  // //larry.go_home_larry();
-  // larry.go_far_larry();
-  // delay(500);
-
-  // talons.close_claw();
-
-
-
-  // //close_claw();
-
-  // delay(1000);
-
-  leviosa.wingardium_leviosa(870);
-  // leviosa.read_leviosa();
-
-  
 }
 
 void handle_encoder_interrupt(){
@@ -129,9 +91,25 @@ char wait_for_master() {
 
 void pick_up_stone_left(){
     susan.turn_susan(-172);
-    leviosa.wingardium_leviosa(30);
+    leviosa.go_home_hermione();
     susan.point_to_min_distance();
-    larry.go_far_larry();
+    if(larry.go_far_larry() == FAIL){
+
+      if(larry.go_far_larry() == FAIL)
+        return;
+    }
+    //while switch is high, wingardium leviosa(1)
+    //close claws of talon 
+    // wingardium leviosa (leviosa.current_position + 30)
+    //larry move backwards
+    //susan turn susan (-344)
+    //wingardium leviosa (100)
+    
+
+
+
+  
+
     
 }
 
@@ -139,6 +117,12 @@ void pick_up_stone_right(){
     susan.turn_susan(172);
     leviosa.wingardium_leviosa(30);
     larry.go_far_larry();
+    //while switch is high, wingardium leviosa(1)
+    //close claws of talon 
+    // wingardium leviosa (leviosa.current_position + 30)
+    //larry move backwards
+    //susan turn susan (-344)
+    //wingardium leviosa (100)
 }
 
 void gauntlet_disposal(){
