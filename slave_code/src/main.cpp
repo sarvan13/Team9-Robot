@@ -24,28 +24,25 @@
 #define RIGHT_POST 'R'
 
 // put your setup code here, to run once:
-Larry larry;
-Talons talons;
+// Larry larry;
+// Talons talons;
 // Leviosa leviosa;
-// Susan susan;
+Susan susan;
 
-void handle_encoder_interrupt();
-void pick_up_stone();
+// void handle_encoder_interrupt();
 
-
-void pick_up_stone(){
-
-}
 
 void setup() {
 
   Serial.begin(115200);
-  pinMode(ENCODER_PIN, INPUT);
+  // pinMode(ENCODER_PIN, INPUT);
 
-  attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
+
+  // attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
   Serial.println("fuck");
   
 }
+
 
 void loop() {
   // put your main code here, to run repeatedly:

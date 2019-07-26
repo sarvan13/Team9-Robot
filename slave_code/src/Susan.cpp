@@ -13,7 +13,7 @@
 // using a 200-step motor (most common)
 #define MOTOR_STEPS 200
 // configure the pins connected
-#define DIR PB3
+#define DIR PB15
 #define STEP PB14
 #define LIMIT_PIN PB4
 
@@ -23,88 +23,87 @@
 #define TRIGGER_PIN PB11
 #define ECHO_PIN PB10
 
-#define SWEEP_ANGLE 30
+#define SWEEP_STEPS 60
+#define GEAR_RATIO 124/36
+
+#define STEPS_PER_REV MOTOR_STEPS*GEAR_RATIO
 
 A4988 stepper(MOTOR_STEPS, DIR, STEP);
 
 Susan::Susan(){
     //Set Default to turn counterclockwise
-    digitalWrite(DIR, HIGH);
-    //Initialize stepper motor
-    stepper.begin(RPM, MICROSTEPPING);
-
+    pinMode(DIR, OUTPUT);
+    pinMode(STEP, OUTPUT);
     pinMode(LIMIT_PIN, INPUT);
     pinMode(TRIGGER_PIN, OUTPUT); // Sets the TRIGGER_PIN as an Output
     pinMode(ECHO_PIN, INPUT); // Sets the ECHO_PIN as an Input
 
+    digitalWrite(DIR, LOW);
+    digitalWrite(STEP, LOW);
+
     //Set reference point
-    go_home_susan();
+    //go_home_susan();
     current_position = 0;
 }
 
 void Susan::go_home_susan(){
     while(digitalRead(LIMIT_PIN) == LOW){
-        stepper.rotate(0.5); //rotate the stepper by half a degree until we reach home
+        // stepper.move(1); //rotate the stepper by one tick until we reach home
     }
 }
 
 /* Paramters: absolute value in degrees that we want to turn to relative to
-/* home position. Between 0 and 360 degrees
- */
-void Susan::turn_susan(double degrees){
-    //Calculate angle needed to rotate in either direction from current postition
-    double to_rotate_pos = abs(degrees - current_position);
-    double to_rotate_neg = abs(current_position + 360 - degrees);
+/* home position. Between -344 and 344 steps
+ */ //gear ratio 124:36
+void Susan::turn_susan(int steps){
 
-    if (to_rotate_neg > to_rotate_pos){
-        //Turn stepper oppposite direction
+    steps = constrain(steps, -344, 344);
+    int distance = steps - current_position;
+    if (distance < 0) {
         digitalWrite(DIR, LOW);
-        //Rotate by necessary amount
-        stepper.rotate(to_rotate_neg);
-        //Set back to default
+    } else {
         digitalWrite(DIR, HIGH);
     }
-    else{
-        stepper.rotate(to_rotate_pos);
+
+    for (int i = 0; i < abs(distance); i++) {
+        digitalWrite(STEP, HIGH);
+        delay(10);
+        digitalWrite(STEP, LOW);
+        delay(10);
     }
 
-    current_position = degrees;
-
+    current_position = steps;
 }
 
 void Susan::point_to_min_distance(){
-    int degrees_from_start = 0;
-    int best_angle_from_start = 0;
-    float distance = 10000; //arbitrarily high number should be distance from start
+    int steps_from_start = 0;
+    int best_num_steps_from_start = 0;
+    float distance = get_sonar_distance();
     float min_distance = distance;
     int clock_flag = -1; //To know which direction to turn 
     int final_position;
 
     //Sweep from center in counterclockwise direction
-    while (degrees_from_start < SWEEP_ANGLE){
-        stepper.rotate(1);
-        degrees_from_start += 1;
+    while (steps_from_start < SWEEP_STEPS){
+        stepper.move(1);
+        steps_from_start += 1;
         distance = get_sonar_distance();
         if (distance < min_distance){
             min_distance = distance;
-            best_angle_from_start = degrees_from_start;
+            best_num_steps_from_start = steps_from_start;
         }
     }
 
     //Sweep from most clockwise point to center
-    //Turn to most clockwise position
-    digitalWrite(DIR, LOW);
-    stepper.rotate(2*SWEEP_ANGLE);
-    //Start turning back to center
-    digitalWrite(DIR, HIGH);
+    stepper.move(-2*SWEEP_STEPS);
     
-    while (degrees_from_start > 0){
-        stepper.rotate(1);
-        degrees_from_start -= 1;
+    while (steps_from_start > 0){
+        stepper.move(1);
+        steps_from_start -= 1;
         distance = get_sonar_distance();
         if (distance < min_distance){
             min_distance = distance;
-            best_angle_from_start = degrees_from_start;
+            best_num_steps_from_start = steps_from_start;
             clock_flag = 1;
         }
     }
@@ -112,22 +111,12 @@ void Susan::point_to_min_distance(){
     //Rotate to final position
     //Check where min is relative to the start position (current position)
     if (clock_flag == 1){
-        final_position = current_position - best_angle_from_start;
-
-        //Absolute angles must be between 0 and 360 degrees
-        if (final_position < 0){
-            final_position += 360; 
-        }
+        final_position = current_position - best_num_steps_from_start;
 
         turn_susan(final_position);
     }
     else{
-        final_position = current_position + best_angle_from_start;
-
-        //Absolute angles must be between 0 and 360 degrees
-        if (final_position > 360){
-            final_position -= 360;
-        }
+        final_position = current_position + best_num_steps_from_start;
 
         turn_susan(final_position);
     }  
