@@ -54,17 +54,19 @@ void setup() {
 
 
 void loop() {
-  char message = wait_for_master();
-  switch(message){
-    case LEFT_POST:
-      pick_up_stone_left();
-    case RIGHT_POST:
-      pick_up_stone_right();
-    case GAUNTLET:
-      gauntlet_disposal();
-  }
+  //First test if sonar works
 
-  Serial.write('D');
+  // char message = wait_for_master();
+  // switch(message){
+  //   case LEFT_POST:
+  //     pick_up_stone_left();
+  //   case RIGHT_POST:
+  //     pick_up_stone_right();
+  //   case GAUNTLET:
+  //     gauntlet_disposal();
+  // }
+
+  // Serial.write('D');
 }
 
 void handle_encoder_interrupt(){
