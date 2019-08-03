@@ -1,5 +1,6 @@
 #define LEVIOSA_H
 
+#define LIMIT_PIN PA15
 enum qrd_state{
     BLACKY,
     WHITEY,

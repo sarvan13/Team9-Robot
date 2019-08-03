@@ -9,16 +9,16 @@
 #include <stdint.h>
 #include "PinNames.h"
 
-#define REVERSE_MOTOR_PIN PA_1 //maybe (could be reverse or FORWARD)
-#define FORWARD_MOTOR_PIN PA_0 //maybe
+#define REVERSE_MOTOR_PIN PA_0 //maybe (could be reverse or FORWARD)
+#define FORWARD_MOTOR_PIN PA_1 //maybe
 
 #define RACK_LIMIT_PIN PB4
 
 
-// #define ENCODER_PIN PB12
+#define ENCODER_PIN PB12
 
-// #define TICKS_PER_REV 24.0 
-// #define DISTANCE_PER_REV 5.0 //mm (perhaps)
+#define TICKS_PER_REV 24.0 
+#define DISTANCE_PER_REV 5.0 //mm (perhaps)
 
 #define MAX_DISTANCE 100 //mm
 
@@ -37,12 +37,12 @@ Larry::Larry()
     pinMode(FORWARD_MOTOR_PIN, OUTPUT);
     pinMode(RACK_LIMIT_PIN, INPUT);
     pinMode(CLAW_LIMIT_PIN, INPUT);
-    // pinMode(ENCODER_PIN, INPUT);
+    pinMode(ENCODER_PIN, INPUT);
 
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 1);
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 1);
 
-    go_home_larry();
+    // go_home_larry();
 
     current_position = 0;
 }
@@ -100,17 +100,17 @@ void Larry::move_larry(double position){
         state = REVERSE;
         pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
-
+       
         while(current_position < position){
-            Serial.print("in loop");
-        }
+             Serial.println(current_position);
+         }
 
-        Serial.print("Out of loop");
+        Serial.println("Out of loop");
 
         pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
-        Serial.print("done");
+        Serial.println("done");
         
     }
 

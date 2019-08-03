@@ -77,8 +77,8 @@ void Movement::apply_pid(int pid){
 }
 
 void Movement::alternate_pid(int pid){
-    int left_motor_speed = reg_speed + pid;
-    int right_motor_speed = reg_speed - pid;
+    int left_motor_speed = reg_speed - pid;
+    int right_motor_speed = reg_speed + pid;
     // Serial.print(left_motor_speed);
     // Serial.print(" ");
     // Serial.print(right_motor_speed);
@@ -157,17 +157,17 @@ void Movement::set_speed(int speed){
 
 
 
-void Movement::rotate_forward(){
+void Movement::rotate_left(int speed){
 
-     pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
-    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 125, 0);
-    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, 125, 0);
+    pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
+    pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, speed, 0);
+    pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, speed, 0);
     pwm_start(RIGHT_REVERSE_PIN, CLOCKF, TPWM, 0, 0);
 
 
 }
 
-void Movement::rotate_backward(int speed){
+void Movement::rotate_right(int speed){
      pwm_start(LEFT_FORWARD_PIN, CLOCKF, TPWM, speed, 0);
     pwm_start(RIGHT_FORWARD_PIN, CLOCKF, TPWM, 0, 0);
     pwm_start(LEFT_REVERSE_PIN, CLOCKF, TPWM, 0, 0);

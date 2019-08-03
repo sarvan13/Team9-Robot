@@ -9,10 +9,10 @@
 #include <stdint.h>
 #include "PinNames.h"
 
-#define REVERSE_MOTOR_PIN PA_3 //maybe (could be reverse or forward)
-#define FORWARD_MOTOR_PIN PA_2 //maybe
+#define REVERSE_MOTOR_PIN PA_2 //maybe (could be reverse or forward)
+#define FORWARD_MOTOR_PIN PA_3 //maybe
 
-#define LIMIT_PIN PA15
+
 
 #define QRD_PIN PA5
 #define HIGH_QRD_THRESHOLD 800
@@ -20,14 +20,14 @@
 
 //#define DISTANCE_PER_REV 3 //mm (currently a fat guess)
 
-#define REG_SPEED 400
+#define REG_SPEED 350
 #define TPWM 500
 #define CLOCKF 100000
 
 Leviosa::Leviosa()
 {
     reg_speed = REG_SPEED;
-    Serial.begin(115200);
+    
     //initialize pins
     pinMode(REVERSE_MOTOR_PIN, OUTPUT);
     pinMode(FORWARD_MOTOR_PIN, OUTPUT);
@@ -38,7 +38,7 @@ Leviosa::Leviosa()
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 1);
 
     // go_home_hermione();
-    current_position = 900;
+    current_position = 40;
 
     //Set base state for QRD encoder
     if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
@@ -61,12 +61,20 @@ void Leviosa::go_home_hermione()
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, reg_speed, 0);
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
-    while(digitalRead(LIMIT_PIN) == LOW){
-        
+    Serial.println(digitalRead(LIMIT_PIN));
+    int count = 0;
+    while(count < 4){
+        if(digitalRead(LIMIT_PIN)) {
+            count++;
+        }
+        else {
+            
+        }
     }
-
+    Serial.println(digitalRead(LIMIT_PIN));
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
+    current_position = 0;
 }
 
 /* Moves the arm vertically by a specified number of revolutions 
@@ -96,6 +104,7 @@ void Leviosa::wingardium_leviosa(int position)
                 }
             }
             current_position += 1;
+          
            
         }
         //Turn off motors once we reach desired position
@@ -118,7 +127,7 @@ void Leviosa::wingardium_leviosa(int position)
                     counter++;
                 }
             }
-             current_position -= 1;
+            current_position -= 1;
         
         }
         //Turn off motors once we reach desired position

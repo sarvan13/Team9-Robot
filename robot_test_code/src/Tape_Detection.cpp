@@ -13,9 +13,9 @@
 #define C PB12
 
 #define TAPEFOLLOWTHRESH 480
-#define BACKWARDFOLLOWTHRESH 800
+#define BACKWARDFOLLOWTHRESH 750
 #define LEFT_THRESH 670
-#define RIGHT_THRESH 670
+#define RIGHT_THRESH 600
 #define MARKER_THRESH 890
 
 #define HARDCODE_KP 120 //240
@@ -51,17 +51,17 @@ branch_state Tape_Detection::branch_exists(){
   digitalWrite(C, LOW);
   float cornerLeftSensor = analogRead(MULTIPLEX_OUT);
 
-  Serial.print(cornerLeftSensor); Serial.print(" "); Serial.print(cornerRightSensor);  Serial.print(" "); 
+  // Serial.print(cornerLeftSensor); Serial.print(" "); Serial.print(cornerRightSensor);  Serial.print(" "); 
   if(cornerLeftSensor > LEFT_THRESH) {
     branch_side = LEFT_BRANCH;
-    Serial.println("Left Branch");
+    // Serial.println("Left Branch");
     return LEFT_BRANCH;
   } else if(cornerRightSensor > RIGHT_THRESH) {
     branch_side = RIGHT_BRANCH;
-    Serial.println("Right Branch");
+    // Serial.println("Right Branch");
     return RIGHT_BRANCH;
   } else {
-    Serial.println("No Branch");
+    // Serial.println("No Branch");
     branch_side = NO_BRANCH;
     return NO_BRANCH;
   }
@@ -73,15 +73,15 @@ marker_state Tape_Detection::marker_exists(){
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
   float marker_left_sensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(marker_left_sensor); Serial.print(" ");
+  // Serial.print(marker_left_sensor); Serial.print(" ");
 
 
   digitalWrite(A, HIGH);
   digitalWrite(B, LOW);
   digitalWrite(C, LOW);
   float marker_right_sensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(marker_right_sensor); Serial.print(" ");
-  Serial.println();
+  // Serial.print(marker_right_sensor); Serial.print(" ");
+  // Serial.println();
 
   if(marker_right_sensor > MARKER_THRESH ){
     marker_side = RIGHT_MARKER;
@@ -116,11 +116,11 @@ int Tape_Detection::get_alternate_path_error(){
   digitalWrite(B, HIGH);
   digitalWrite(C, LOW);
   float backwards_left_sensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(backwards_left_sensor); Serial.print(" ");
+  // Serial.print(backwards_left_sensor); Serial.print(" ");
 
 
   float backwards_right_sensor = analogRead(LEFT_BACKWARDS_SENSOR);
-  Serial.print(backwards_right_sensor); Serial.print(" ");
+  // Serial.print(backwards_right_sensor); Serial.print(" ");
   
 
 
@@ -138,7 +138,7 @@ int Tape_Detection::get_alternate_path_error(){
    } else {
       path_error = 0;
    }
-  Serial.println(path_error); 
+  // Serial.println(path_error); 
   return path_error;
 }
 
@@ -155,19 +155,19 @@ int Tape_Detection::get_path_error(){
   digitalWrite(B, HIGH);
   digitalWrite(C, HIGH);
   float mainLeftSensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(mainLeftSensor); Serial.print(" ");
+  // Serial.print(mainLeftSensor); Serial.print(" ");
 
   digitalWrite(A, HIGH);
   digitalWrite(B, LOW);
   digitalWrite(C, HIGH);
   float mainMiddleSensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(mainMiddleSensor); Serial.print(" ");
+  // Serial.print(mainMiddleSensor); Serial.print(" ");
 
   digitalWrite(A, LOW);
   digitalWrite(B, HIGH);
   digitalWrite(C, HIGH);
   float mainRightSensor = analogRead(MULTIPLEX_OUT);
-  Serial.print(mainRightSensor); Serial.print(" ");
+  // Serial.print(mainRightSensor); Serial.print(" ");
 
 
   previous_path_error = path_error;
@@ -188,7 +188,7 @@ int Tape_Detection::get_path_error(){
   } else {
       path_error = 0;
   }
-  Serial.println(path_error); 
+  // Serial.println(path_error); 
   return path_error;
 }
 

@@ -15,7 +15,7 @@
 // configure the pins connected
 #define DIR PB15
 #define STEP PB14
-#define LIMIT_PIN PB4
+#define LIMIT_PIN PB3
 
 #define RPM 1
 #define MICROSTEPPING 1
@@ -50,9 +50,26 @@ Susan::Susan(){
 }
 
 void Susan::go_home_susan(){
-    while(digitalRead(LIMIT_PIN) == LOW){
-        // stepper.move(1); //rotate the stepper by one tick until we reach home
+    if(current_position > 0) {
+        set_dir(COUNTERCLOCKWISE);
+    } else {
+        set_dir(CLOCKWISE);
     }
+    int count = 0;
+    while(!digitalRead(LIMIT_PIN)){
+        send_step(); //rotate the stepper by one tick until we reach home
+        count++;
+        if(count == MOTOR_STEPS) {
+            if(digitalRead(DIR) == CLOCKWISE) {
+                set_dir(COUNTERCLOCKWISE);
+            } else {
+                set_dir(CLOCKWISE);
+            }
+        }
+        Serial.println(digitalRead(LIMIT_PIN));
+    }
+    
+    current_position = 0;
 }
 
 /* Paramters: absolute value in degrees that we want to turn to relative to
@@ -70,9 +87,9 @@ void Susan::turn_susan(int steps){
 
     for (int i = 0; i < abs(distance); i++) {
         digitalWrite(STEP, HIGH);
-        delay(10);
+        delay(3);
         digitalWrite(STEP, LOW);
-        delay(10);
+        delay(3);
     }
 
     current_position = steps;
@@ -80,9 +97,9 @@ void Susan::turn_susan(int steps){
 
 void Susan::send_step(){
     digitalWrite(STEP, HIGH);
-    delay(10);
+    delay(5);
     digitalWrite(STEP, LOW);
-    delay(10);
+    delay(5);
     current_position += digitalRead(DIR) ? 1 : -1;
 }
 
@@ -115,10 +132,11 @@ float Susan::point_to_min_distance(){
 
     //Sweep from most clockwise point to center
     set_dir(CLOCKWISE);
+    delay(500);
     for(int i = 0; i < 2 * SWEEP_STEPS; i++){
         send_step();
     }
-    
+    delay(500);
     set_dir(COUNTERCLOCKWISE);
     while (steps_from_start > 0){
         send_step();
@@ -133,6 +151,7 @@ float Susan::point_to_min_distance(){
 
     //Rotate to final position
     //Check where min is relative to the start position (current position)
+    delay(500);
     if (clock_flag == -1){
         final_position = current_position - best_num_steps_from_start;
         
@@ -151,16 +170,18 @@ float Susan::get_sonar_distance(){
     long duration;
     float distance;
     // Clears the TRIGGER_PIN
-    digitalWrite(TRIGGER_PIN, LOW);
     delayMicroseconds(2);
     // Sets the TRIGGER_PIN on HIGH state for 10 micro seconds
     digitalWrite(TRIGGER_PIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIGGER_PIN, LOW);
     // Reads the ECHO_PIN, returns the sound wave travel time in microseconds
-    duration = pulseIn(ECHO_PIN, HIGH);
-    // Calculating the distance
+    duration = pulseIn(ECHO_PIN, HIGH, 10000);    // Calculating the distance
     distance= duration*0.034/2;
+    if(distance < 0) {
+        distance = 1000;
+    }
     Serial.println(distance);
+    
     return distance;
 }
