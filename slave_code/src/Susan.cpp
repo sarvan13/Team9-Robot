@@ -45,14 +45,28 @@ Susan::Susan(){
     digitalWrite(STEP, LOW);
 
     //Set reference point
-    //go_home_susan();
     current_position = 0;
 }
 
 void Susan::go_home_susan(){
-    while(digitalRead(LIMIT_PIN) == LOW){
-        // stepper.move(1); //rotate the stepper by one tick until we reach home
+    if(current_position > 0) {
+        set_dir(COUNTERCLOCKWISE);
+    } else {
+        set_dir(CLOCKWISE);
     }
+    int count = 0;
+    while(!digitalRead(LIMIT_PIN)){
+        send_step(); //rotate the stepper by one tick until we reach home
+        count++;
+        if(count == MOTOR_STEPS) {
+            if(digitalRead(DIR) == CLOCKWISE) {
+                set_dir(COUNTERCLOCKWISE);
+            } else {
+                set_dir(CLOCKWISE);
+            }
+        }
+    }
+    current_position = 0;
 }
 
 /* Paramters: absolute value in degrees that we want to turn to relative to
