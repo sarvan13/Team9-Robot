@@ -16,8 +16,8 @@ class Movement
         void grab_plushie_front();
         void stop();
         void set_speed(int speed);
-        void rotate_forward();
-        void rotate_backward(int speed);
+        void rotate_left(int speed);
+        void rotate_right(int speed);
         void alternate_pid(int pid);
     
     private:
