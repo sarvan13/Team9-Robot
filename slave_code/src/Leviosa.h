@@ -1,6 +1,6 @@
 #define LEVIOSA_H
 
-#define LIMIT_PIN PA15
+
 enum qrd_state{
     BLACKY,
     WHITEY,
@@ -14,6 +14,7 @@ class Leviosa
         void go_home_hermione();
         void read_leviosa();
         int get_current_position();
+        void set_speed(int speed);
     private:
         int reg_speed;
         int current_position;

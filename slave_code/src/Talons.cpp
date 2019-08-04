@@ -9,7 +9,7 @@
 //These two control PWM duty cycle to servo - not actual angle.
 #define CLOSED_ANGLE 30
 #define OPEN_ANGLE 120 //about 200 degree angle
-#define HUG_ANGLE 45
+#define HUG_ANGLE 70
 
 #define SERVO_PIN PB_1
 #define TPWM 500

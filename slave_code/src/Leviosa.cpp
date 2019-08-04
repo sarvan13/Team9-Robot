@@ -12,7 +12,7 @@
 #define REVERSE_MOTOR_PIN PA_2 //maybe (could be reverse or forward)
 #define FORWARD_MOTOR_PIN PA_3 //maybe
 
-
+#define LIMIT_PIN PB3
 
 #define QRD_PIN PA5
 #define HIGH_QRD_THRESHOLD 800
@@ -38,7 +38,7 @@ Leviosa::Leviosa()
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 1);
 
     // go_home_hermione();
-    current_position = 40;
+    current_position = 0;
 
     //Set base state for QRD encoder
     if(analogRead(QRD_PIN) > HIGH_QRD_THRESHOLD){
@@ -62,15 +62,11 @@ void Leviosa::go_home_hermione()
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
     Serial.println(digitalRead(LIMIT_PIN));
-    int count = 0;
-    while(count < 4){
-        if(digitalRead(LIMIT_PIN)) {
-            count++;
-        }
-        else {
-            
-        }
+    
+    while(digitalRead(LIMIT_PIN) == LOW){
+        Serial.println("Its Leviosa, not Leviosar");
     }
+
     Serial.println(digitalRead(LIMIT_PIN));
     pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
     pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
@@ -158,4 +154,8 @@ int Leviosa::check_leviosa(qrd_state current_state){
 
 int Leviosa::get_current_position(){
     return current_position;
+}
+
+void Leviosa::set_speed(int speed){
+    reg_speed = speed;
 }

@@ -15,7 +15,7 @@
 // configure the pins connected
 #define DIR PB15
 #define STEP PB14
-#define LIMIT_PIN PB3
+
 
 #define RPM 1
 #define MICROSTEPPING 1
@@ -31,7 +31,6 @@
 
 #define STEPS_PER_REV MOTOR_STEPS*GEAR_RATIO
 
-A4988 stepper(MOTOR_STEPS, DIR, STEP);
 
 Susan::Susan(){
     //Set Default to turn counterclockwise
@@ -66,7 +65,6 @@ void Susan::go_home_susan(){
                 set_dir(CLOCKWISE);
             }
         }
-        Serial.println(digitalRead(LIMIT_PIN));
     }
     
     current_position = 0;
@@ -178,7 +176,7 @@ float Susan::get_sonar_distance(){
     // Reads the ECHO_PIN, returns the sound wave travel time in microseconds
     duration = pulseIn(ECHO_PIN, HIGH, 10000);    // Calculating the distance
     distance= duration*0.034/2;
-    if(distance < 0) {
+    if(distance <= 0) {
         distance = 1000;
     }
     Serial.println(distance);

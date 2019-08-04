@@ -23,9 +23,6 @@
 #define TPWM 500
 #define CLOCKF 100000
 
-void handle_left_wheel_interrupt();
-void handle_right_wheel_interrupt();
-
 int left_i = 0;
 int right_i = 0;
 
@@ -37,11 +34,6 @@ Movement::Movement()
   pinMode(RIGHT_FORWARD_PIN, OUTPUT);
   pinMode(RIGHT_REVERSE_PIN, OUTPUT); 
   pinMode(GROUND, OUTPUT);
-//   pinMode(LEFT_WHEEL_INTERRUPT, INPUT_PULLUP);
-//   pinMode(RIGHT_WHEEL_INTERRUPT, INPUT_PULLUP);
-
-//   attachInterrupt(LEFT_WHEEL_INTERRUPT, handle_left_wheel_interrupt, RISING);
-//   attachInterrupt(RIGHT_WHEEL_INTERRUPT, handle_right_wheel_interrupt, RISING);
 
   digitalWrite(GROUND, LOW);
 

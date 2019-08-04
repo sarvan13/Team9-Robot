@@ -1,5 +1,5 @@
 #define SUSAN_H
-
+#define LIMIT_PIN PA15
 
 class Susan
 {
