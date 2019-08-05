@@ -10,7 +10,10 @@
 #include <Communication.h>
 
 #define STATE_INTERRUPT PA5
-#define COLLISION_DETECT_PIN PB6
+#define COLLISION_DETECT_PIN PB3
+#define OUT_1 PB4
+#define OUT_2 PB5
+#define IN PB6
 
 //void handle_state(); //implement built in led
 
@@ -61,7 +64,12 @@ void setup()
   // pinMode(STATE_INTERRUPT, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(COLLISION_DETECT_PIN, INPUT);
-  attachInterrupt(COLLISION_DETECT_PIN, handle_collision, RISING);
+  // attachInterrupt(COLLISION_DETECT_PIN, handle_collision, RISING);
+  pinMode(OUT_1, OUTPUT);
+  pinMode(OUT_2, OUTPUT);
+  pinMode(IN, INPUT);
+  digitalWrite(OUT_1, LOW);
+  digitalWrite(OUT_2, LOW);
   // movement.reverse(500,500);
 
   // attachInterrupt(STATE_INTERRUPT, handle_state, RISING);
@@ -69,10 +77,19 @@ void setup()
   // movement.set_speed(100);
   // tape_detection.set_Kp(40);
   // tape_detection.set_Kd(0);
+  movement.rotate_right(500);
 }
 
 void loop()
 {
+   if(IN) {
+    Serial.println("The slave speaking to the master? Unacceptable.");
+  }
+  digitalWrite(OUT_1, HIGH);delay(500);digitalWrite(OUT_1, LOW);
+  digitalWrite(OUT_2, HIGH);delay(500);
+  digitalWrite(OUT_1, HIGH);delay(500);
+  digitalWrite(OUT_1,LOW);digitalWrite(OUT_2, LOW);
+  delay(500);
   // tape_detection.get_path_error();
   // movement.apply_pid(tape_detection.get_pid());
   // tape_detection.branch_exists();
