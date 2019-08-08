@@ -9,8 +9,8 @@
 #include <stdint.h>
 #include "PinNames.h"
 
-#define REVERSE_MOTOR_PIN PA_0 //maybe (could be reverse or FORWARD)
-#define FORWARD_MOTOR_PIN PA_1 //maybe
+#define REVERSE_MOTOR_PIN PA_1 //maybe (could be reverse or FORWARD)
+#define FORWARD_MOTOR_PIN PA_0 //maybe
 
 #define RACK_LIMIT_PIN PB4
 
@@ -120,7 +120,7 @@ void Larry::move_larry(double position){
         pwm_start(FORWARD_MOTOR_PIN, CLOCKF, TPWM, 0, 0);
 
         while(current_position > position){
-
+            Serial.println(current_position);
         }
 
         pwm_start(REVERSE_MOTOR_PIN, CLOCKF, TPWM, 0, 0);

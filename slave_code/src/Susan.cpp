@@ -13,9 +13,10 @@
 // using a 200-step motor (most common)
 #define MOTOR_STEPS 200
 // configure the pins connected
-#define DIR PB15
-#define STEP PB14
+#define DIR PB14
+#define STEP PB15
 
+#define LIMIT_PIN PA15
 
 #define RPM 1
 #define MICROSTEPPING 1
@@ -23,7 +24,6 @@
 #define TRIGGER_PIN PB11
 #define ECHO_PIN PB10
 
-#define SWEEP_STEPS 60
 #define GEAR_RATIO 124/36
 
 #define CLOCKWISE 1
@@ -45,20 +45,21 @@ Susan::Susan(){
 
     //Set reference point
     current_position = 0;
+
+    sweep_angle = 60; //Default number of steps used for the first post
 }
 
 void Susan::go_home_susan(){
-    if(current_position > 0) {
+    if(current_position >= 0) {
         set_dir(COUNTERCLOCKWISE);
     } else {
         set_dir(CLOCKWISE);
-<<<<<<< HEAD
     }
     int count = 0;
     while(!digitalRead(LIMIT_PIN)){
         send_step(); //rotate the stepper by one tick until we reach home
         count++;
-        if(count == MOTOR_STEPS) {
+        if(count == 250) {
             if(digitalRead(DIR) == CLOCKWISE) {
                 set_dir(COUNTERCLOCKWISE);
             } else {
@@ -66,13 +67,20 @@ void Susan::go_home_susan(){
             }
         }
     }
-=======
+    current_position = 0;
+}
+
+void Susan::go_home_susan_CW(){
+    if(current_position >= 0) {
+        set_dir(CLOCKWISE);
+    } else {
+        set_dir(COUNTERCLOCKWISE);
     }
     int count = 0;
     while(!digitalRead(LIMIT_PIN)){
         send_step(); //rotate the stepper by one tick until we reach home
         count++;
-        if(count == MOTOR_STEPS) {
+        if(count == 250) {
             if(digitalRead(DIR) == CLOCKWISE) {
                 set_dir(COUNTERCLOCKWISE);
             } else {
@@ -80,8 +88,6 @@ void Susan::go_home_susan(){
             }
         }
     }
-    
->>>>>>> 2af513177f97692106ee5567f605c47683c2b163
     current_position = 0;
 }
 
@@ -133,7 +139,7 @@ float Susan::point_to_min_distance(){
     int final_position;
     set_dir(COUNTERCLOCKWISE);
     //Sweep from center in counterclockwise direction
-    while (steps_from_start < SWEEP_STEPS){
+    while (steps_from_start < sweep_angle){
         send_step();
         steps_from_start += 1;
         distance = get_sonar_distance();
@@ -146,7 +152,7 @@ float Susan::point_to_min_distance(){
     //Sweep from most clockwise point to center
     set_dir(CLOCKWISE);
     delay(500);
-    for(int i = 0; i < 2 * SWEEP_STEPS; i++){
+    for(int i = 0; i < 2 * sweep_angle; i++){
         send_step();
     }
     delay(500);
@@ -194,7 +200,10 @@ float Susan::get_sonar_distance(){
     if(distance <= 0) {
         distance = 1000;
     }
-    Serial.println(distance);
     
     return distance;
+}
+
+void Susan::set_sweep_angle(int steps){
+    sweep_angle = steps;
 }

@@ -16,21 +16,26 @@
 #define TICKS_PER_REV 24.0 
 #define DISTANCE_PER_REV 50.75 //mm (perhaps)
 
-
-
 #define FORWARD 1
 #define REVERSE -1
 
-#define GAUNTLET 'G'
-#define LEFT_POST 'L'
-#define RIGHT_POST 'R'
+#define IN_1 PB5
+#define IN_2 PB6
+#define OUT PB7
+
+#define STATE_DEBOUNCE 5
+// #define GAUNTLET 'G'
+// #define LEFT_POST 'L'
+// #define RIGHT_POST 'R'
 
 // char wait_for_master();
-// void pick_up_stone_left();
-// void pick_up_stone_right();
-// void gauntlet_disposal();
+void pick_up_stone_left();
+void pick_up_stone_right();
+void gauntlet_disposal();
 
 int current_position;
+
+int arm_counter = 0;
 
 // put your setup code here, to run once:
 Larry larry;
@@ -38,8 +43,14 @@ Talons talons;
 Leviosa leviosa;
 Susan susan;
 
+enum arm_state {
+  LEFT_POLE,
+  RIGHT_POLE
+};
+
 void handle_encoder_interrupt();
 
+arm_state arm_side;
 
 void setup() {
 
@@ -47,85 +58,220 @@ void setup() {
 
   pinMode(ENCODER_PIN, INPUT);
   attachInterrupt(ENCODER_PIN, handle_encoder_interrupt, RISING);
+  pinMode(IN_1, INPUT);
+  pinMode(IN_2, INPUT);
+  pinMode(OUT, OUTPUT);
+  digitalWrite(OUT, LOW);
 
-  //PICKING UP STONE FROM FUNNEL
-  // delay(1000);
-  // leviosa.go_home_hermione();
-  // delay(1000);
-  // leviosa.wingardium_leviosa(20);
-  // delay(500);
-  // larry.go_home_larry();
-  // susan.go_home_susan();
-  // delay(500);
-  // larry.move_larry(90);
-  // susan.turn_susan(320);
-  // delay(500);
-  // talons.close_claw();
-  // delay(1000);
-  // leviosa.wingardium_leviosa(50);
-  // susan.turn_susan(100);
-  // delay(500);
-  // talons.open_claw();
-  // delay(1000);
-  
-  //PICKING UP STONE FROM POLE
-  // leviosa.go_home_hermione();
-  // delay(200);
-  // leviosa.wingardium_leviosa(5);
-  // delay(200);
-  // leviosa.set_speed(350);
-  // leviosa.go_home_hermione();
-  // leviosa.set_speed(350);
-  // larry.go_home_larry();
-  // larry.move_larry(90);
-  // susan.go_home_susan();
-  // talons.open_claw();
 
-  delay(500);
+
+  //SETUP
   leviosa.go_home_hermione();
+  leviosa.wingardium_leviosa(85);
   delay(200);
-  susan.go_home_susan();
-  Serial.println("Susan is home!");
-  susan.turn_susan(-100);
-  delay(200);
-  susan.point_to_min_distance();
-  delay(200);
-  larry.go_far_larry();
-  talons.hug_pole();
-  delay(1000);
-  leviosa.wingardium_leviosa(53);
-  talons.close_claw();
-  delay(1000);
-  leviosa.wingardium_leviosa(70);
-  // susan.turn_susan(100);
-  // delay(500);
-  // talons.open_claw();
-  // delay(200);
-  // susan.turn_susan(0);
-
-  //DROPPING STONE TO FUNNEL
-  susan.go_home_susan();
-  delay(500);
-  leviosa.wingardium_leviosa(30);
-  delay(500);
   larry.go_home_larry();
-  
-  delay(500);
-  larry.move_larry(90);
-  susan.turn_susan(321);
-  delay(500);
-  delay(500);
+  larry.move_larry(80);
+  delay(200);
+  susan.go_home_susan();
   talons.open_claw();
-  delay(500);
-  susan.turn_susan(100);
-
+ 
 
   }
 
 
 void loop() {
-  // Serial.println(digitalRead(LIMIT_PIN));
-  susan.get_sonar_distance();
+
+  int pin_1 = HIGH;
+  int pin_2 = HIGH;
+  for (int i = 0; i < STATE_DEBOUNCE; i++) {
+    pin_1 = pin_1 && digitalRead(IN_1);
+    pin_2 = pin_2 && digitalRead(IN_2);
+  }
+
+  if(pin_1 == HIGH && pin_2 == HIGH){
+          digitalWrite(OUT, HIGH);
+          Serial.println("GAUNTLET");
+          gauntlet_disposal();
+          digitalWrite(OUT, LOW);
+          delay(500);
+          larry.move_larry(80);
+          delay(200);
+          susan.turn_susan(100);
+          delay(200);
+  }else if(pin_1 == HIGH && pin_2 == LOW){
+           digitalWrite(OUT, HIGH);
+          Serial.println("LEFT_POST");
+          pick_up_stone_left();
+          digitalWrite(OUT, LOW);
+          delay(500);
+          susan.turn_susan(100);
+          delay(200);
+          arm_counter++;
+          arm_side = LEFT_POLE;
+  }else if(pin_1 == LOW && pin_2 == HIGH){
+          digitalWrite(OUT, HIGH);
+          Serial.println("RIGHT_POST");
+          pick_up_stone_right();
+          digitalWrite(OUT, LOW);
+          delay(500);
+          susan.turn_susan(100);
+          delay(200);
+          arm_counter++;
+          arm_side = RIGHT_POLE;
+          
+  }else{
+    digitalWrite(OUT, LOW);
+    Serial.println("NOTHING"); 
+  }
+
+  
+}
+
+
+void pick_up_stone_left(){
+  digitalWrite(OUT, HIGH);
+  if(arm_counter == 1){
+    leviosa.wingardium_leviosa(33);
+    delay(200);
+    susan.go_home_susan();
+    delay(200);
+  }
+  susan.turn_susan(200);
+  delay(200);
+  if(arm_counter == 0){
+    larry.go_far_larry();
+    delay(200);
+  }else{
+    larry.move_larry(64);
+    delay(200);
+  }
+  larry.move_larry(larry.current_position + 20);
+  if(arm_counter == 1){
+    susan.set_sweep_angle(30);
+  }
+  susan.point_to_min_distance();
+  delay(400);
+  if(arm_counter == 0){
+    larry.go_far_larry();
+    delay(200);
+  }else{
+    larry.move_larry(64);
+    delay(200);
+  }
+ 
+  larry.move_larry(larry.current_position + 8);
+  delay(200);
+  talons.close_claw();
+  delay(1000);
+  if(arm_counter == 0){
+    leviosa.wingardium_leviosa(92);
+    delay(200);
+    larry.go_far_larry();
+    delay(200);
+    leviosa.wingardium_leviosa(100);
+    delay(200);
+  }else{
+    leviosa.wingardium_leviosa(43);
+    delay(200);
+    larry.move_larry(64);
+    delay(200);
+    leviosa.wingardium_leviosa(50);
+    delay(200);
+  }
+  susan.go_home_susan();
+  delay(200);
+  larry.move_larry(90);
+
+  digitalWrite(OUT, LOW);
+}
+
+void pick_up_stone_right(){
+  digitalWrite(OUT, HIGH);
+  if(arm_counter == 1){
+    leviosa.wingardium_leviosa(35);
+    delay(200);
+    susan.go_home_susan();
+    delay(200);
+  }
+  susan.turn_susan(-160);
+  delay(200);
+  larry.go_far_larry();
+  delay(200);
+  larry.move_larry(larry.current_position + 20);
+  if(arm_counter == 1){
+    susan.set_sweep_angle(40);
+  }
+  susan.point_to_min_distance();
+  delay(400);
+  larry.go_far_larry();
+  delay(200);
+  if(arm_counter == 0){
+    larry.move_larry(larry.current_position + 8);
+  }
+  
+  delay(200);
+  talons.close_claw();
+  delay(1000);
+  if(arm_counter == 0){
+    leviosa.wingardium_leviosa(92);
+    delay(200);
+    larry.go_far_larry();
+    delay(200);
+    leviosa.wingardium_leviosa(100);
+    delay(200);
+  }else{
+    leviosa.wingardium_leviosa(43);
+    delay(200);
+    larry.go_far_larry();
+    delay(200);
+    leviosa.wingardium_leviosa(50);
+    delay(200);
+  }
+  susan.go_home_susan();
+  delay(200);
+  larry.move_larry(90);
+  digitalWrite(OUT, LOW);
+}
+
+void gauntlet_disposal(){
+  digitalWrite(OUT, HIGH);
+  larry.move_larry(80);
+  delay(200);
+  leviosa.go_home_hermione();
+  delay(200);
+  susan.go_home_susan();
+  if(arm_side == LEFT_POLE){
+    if(arm_counter == 1){
+      susan.turn_susan(10);
+      delay(200);
+      larry.go_home_larry();
+      delay(200);
+      talons.open_claw();
+    }else{
+      susan.turn_susan(40);
+      delay(200);
+      larry.go_home_larry();
+      delay(200);
+      talons.final_open_claw();
+    }
+  }else{
+    if(arm_counter == 1){
+      susan.turn_susan(10);
+      delay(200);
+      larry.go_home_larry();
+      delay(200);
+      talons.open_claw();
+    }else{
+      susan.turn_susan(43);
+      delay(200);
+      larry.go_home_larry();
+      delay(200);
+      talons.final_open_claw();
+    }
+  }
+  
+
+  digitalWrite(OUT, LOW);
 }
 
 void handle_encoder_interrupt(){
@@ -135,72 +281,10 @@ void handle_encoder_interrupt(){
   else if (larry.state == REVERSE){
     larry.current_position += DISTANCE_PER_REV / TICKS_PER_REV;
   }
-
-  Serial.println(current_position);
-
   if(larry.current_position < 0){
     larry.current_position = 0;
   } 
-  
+
 }
-
-// // char wait_for_master() {
-// //   char message = 0;
-// //   while (true) {
-// //     if (Serial.available() > 0) {
-// //       message = Serial.read();
-// //       if (message == LEFT_POST || message == RIGHT_POST || message == GAUNTLET) {
-// //         return message;
-// //       }
-// //     }
-// //   }
-// // }
-
-// void pick_up_stone_left(){
-
-    // susan.turn_susan(-172);
-    // leviosa.go_home_hermione();
-    // float distance = susan.point_to_min_distance();
-    // if(larry.go_far_larry() == FAIL){
-
-    //   if(larry.go_far_larry() == FAIL)
-    //     return;
-    // }
-    // current_position = leviosa.get_current_position();
-    // while(!digitalRead(CLAW_LIMIT_PIN)){
-    //   current_position++;
-    //   leviosa.wingardium_leviosa(current_position);
-    // }
-    // talons.close_claw();
-    // leviosa.wingardium_leviosa(current_position + 30);
-    // larry.move_larry(larry.current_position + 20);
-    // // susan.turn_susan(-344);
-    // //lower by certain amount 
-    
-//}
-
-// void pick_up_stone_right(){
-//     susan.turn_susan(172);
-//    leviosa.go_home_hermione();
-//     float distance = susan.point_to_min_distance();
-//     if(larry.go_far_larry() == FAIL){
-
-//       if(larry.go_far_larry() == FAIL)
-//         return;
-//     }
-//     current_position = leviosa.get_current_position();
-//     while(!digitalRead(CLAW_LIMIT_PIN)){
-//       current_position++;
-//       leviosa.wingardium_leviosa(current_position);
-//     }
-//     talons.close_claw();
-//     leviosa.wingardium_leviosa(current_position + 30);
-//     larry.move_larry(larry.current_position + 20);
-//     susan.turn_susan(344);
-// }
-
-// void gauntlet_disposal(){
-
-// }
 
 

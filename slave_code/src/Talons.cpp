@@ -7,9 +7,9 @@
 #include "PinNames.h"
 
 //These two control PWM duty cycle to servo - not actual angle.
-#define CLOSED_ANGLE 30
-#define OPEN_ANGLE 120 //about 200 degree angle
-#define HUG_ANGLE 70
+#define CLOSED_ANGLE 100
+#define OPEN_ANGLE 270 //about 200 degree angle
+#define FINAL_ANGLE 160
 
 #define SERVO_PIN PB_1
 #define TPWM 500
@@ -17,8 +17,8 @@
 #define CLAW_LIMIT_PIN PB13
 
 Talons::Talons(){
-    pwm_start(SERVO_PIN, CLOCKF, TPWM, OPEN_ANGLE, 1);
     angle = OPEN_ANGLE;
+    pwm_start(SERVO_PIN, CLOCKF, TPWM, OPEN_ANGLE, 1);
 }
 
 int Talons::get_current_angle(){
@@ -38,6 +38,6 @@ void Talons::open_claw(){
   pwm_start(SERVO_PIN, CLOCKF, TPWM, OPEN_ANGLE, 0);
 }
 
-void Talons::hug_pole(){
-  pwm_start(SERVO_PIN, CLOCKF, TPWM, HUG_ANGLE, 0);
+void Talons::final_open_claw(){
+  pwm_start(SERVO_PIN, CLOCKF, TPWM, FINAL_ANGLE, 0);
 }

@@ -1,5 +1,5 @@
 #define LEVIOSA_H
-
+#define LIMIT_PIN PB3
 
 enum qrd_state{
     BLACKY,
@@ -19,7 +19,7 @@ class Leviosa
         int reg_speed;
         int current_position;
         enum qrd_state current_state = WHITEY;
-        int check_leviosa(qrd_state current_state);
+        int check_leviosa();
 };
 
 
